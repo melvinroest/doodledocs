@@ -1,1 +1,18 @@
-{{outlet}}
+<div id="page-container">
+  <main>
+    <header>
+      <img src="doodle docs big logo.png" />
+      <span>Early Alpha</span>
+      <nav>
+        {{#link-to "index" class="button"}}Home{{/link-to}}
+        |
+        {{#link-to "faq" class="button"}}FAQ{{/link-to}}
+      </nav>
+    </header>
+    {{outlet}}
+  </main>
+  <footer>
+    <p>Made with ❤️ by Melvin Roest </p>
+    <p>Github | LinkedIn</p>
+  </footer>
+</div>
