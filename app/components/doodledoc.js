@@ -12,8 +12,9 @@ function init(canvas){
   canvas.width  = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = '#55f';
+  context.fillStyle = '#FFFBEB'; //for debug use: $55f
   context.fillRect(0, 0, canvas.width, canvas.height);
+  // initHud();
 
   let lastX = 0;
   let lastY = 0;
@@ -22,20 +23,29 @@ function init(canvas){
   let lineThickness = pencilThickness;
   let tool = new pencil();
 
-  canvas.addEventListener('pointerdown', e => {
-    console.log('custom', e.clientX, e.clientY)
+  //init buttons
+  ;['click', 'touchstart'].forEach(function(eventName) {
+    document.getElementById('pencil').addEventListener(eventName, e =>{
+      pencilThickness = 1
+      pencilColor = '#000'
+    }) 
+  })
+
+  ;['click', 'touchstart'].forEach(function(eventName) {
+    document.getElementById('eraser').addEventListener(eventName, e =>{
+      pencilThickness = 20
+      pencilColor = '#FFFBEB'
+    }) 
   })
 
   //init pressure settings
   let block = {
     start: function(e){
-      console.log('start', e)
       e.userInput = 'start';
       mousePosOnCanvas(e);
     },
 
     change: function(force, e){
-      console.log('change', e.type, e)
       e.userInput = 'change';
       e.userForce = force;
       mousePosOnCanvas(e)
@@ -73,10 +83,9 @@ function init(canvas){
     function startDraw(e){
       currentTool.started = true
       context.fillStyle = pencilColor
-      // lastX = e._x - e.target.offsetLeft
-      // lastY = e._y - e.target.offsetTop
-      lastX = e._x
-      lastY = e._y
+      lastX = e._x - e.target.offsetLeft
+      lastY = e._y - e.target.offsetTop
+      lineThickness = pencilThickness
     }
 
     function endDraw(e){
@@ -186,6 +195,20 @@ function init(canvas){
     }
   } //end pencil()
 
+  function drawHud(lineThickness, x, y){
+    /* draw all circles */
+    hudContext.clearRect(0,0,canvas.width, canvas.height)
+    hudContext.strokeStyle = "#f00"
+    hudContext.lineWidth = 1
+    hudContext.beginPath()
+    let _x = x 
+    let _y = y 
+    // hudContext.ellipse(_x, _y, lineThickness * .8, lineThickness * .8, 0 * Math.PI/180, 0, Math.PI*2, true)
+    hudContext.rect(x - lineThickness/2, y - lineThickness/2, lineThickness + 5, lineThickness + 5)
+    hudContext.stroke()
+    
+  }
+
   function mousePosOnCanvas(e) {
     // Opera
     if (e.offsetX || e.offsetX == 0) {
@@ -204,9 +227,8 @@ function init(canvas){
       func(e)
     }
   }
-
-
 }
+
 export default Component.extend({
   attributeBindings: ['style'],
   style: "position: relative; height: 100vh",
