@@ -4,6 +4,8 @@
 
 html {
   font-size: 1.6em;
+  width: 100%;
+  height: 100%;
 }
 
 html, body, p {
@@ -207,3 +209,8 @@ footer {
   height: 5rem;
 }
 
+
+
+footer {
+  opacity: 1;
+}
