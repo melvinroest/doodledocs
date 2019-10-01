@@ -9,15 +9,35 @@ function init(hud, canvas){
   let context = canvas.getContext('2d');
   canvas.style.width ='100%';
   canvas.style.height='100%';
-  canvas.width  = canvas.offsetWidth;
+  canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
+
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = '#FFFBEB'; //for debug use: $55f
   context.fillRect(0, 0, canvas.width, canvas.height);
   
   //init hud
   let hudContext = hud.getContext('2d');
+  hud.style.width ='100%';
+  hud.style.height='100%';
+  hud.width = canvas.offsetWidth;
+  hud.height = canvas.offsetHeight;
+
   hudContext.clearRect(0, 0, canvas.width, canvas.height);
+
+  // //debug
+  // hudContext.strokeStyle = "#f00"
+  // hudContext.lineWidth = 1
+  // hudContext.beginPath()
+  // hudContext.rect(200, 200, 100, 100)
+  // hudContext.stroke()
+
+  // //debug 2
+  // context.strokeStyle = "#0f0"
+  // context.lineWidth = 1
+  // context.beginPath()
+  // context.rect(500, 500, 100, 100)
+  // context.stroke()
 
   let lastX = 0;
   let lastY = 0;
@@ -92,7 +112,7 @@ function init(hud, canvas){
     }
 
     function endDraw(e){
-      // hudContext.clearRect(0, 0, canvas.width, canvas.height)
+      hudContext.clearRect(0, 0, canvas.width, canvas.height);
       if(tool.started) {
         tool.started = false
       }
@@ -112,6 +132,8 @@ function init(hud, canvas){
       if(inputDevice === 'stylus'){
 
         if(tool.started) {
+          // console.log('pencil/change')
+          // console.log(e)
        
           let mouseX = e._x
           let mouseY = e._y
@@ -182,7 +204,7 @@ function init(hud, canvas){
         }  
       }
 
-      // hudContext.clearRect(0,0,canvas.width, canvas.height)
+      hudContext.clearRect(0, 0, canvas.width, canvas.height);
       hudContext.strokeStyle = "#f00"
       hudContext.lineWidth = 1
       hudContext.beginPath()
@@ -229,6 +251,7 @@ export default Component.extend({
     if(this.element.children.length === 2 && this.element.children[0].nodeName === "CANVAS" && this.element.children[1].nodeName === "CANVAS"){
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
+      console.log([hud, canvas])
       init(hud, canvas);
     }
   },
