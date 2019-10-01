@@ -4,6 +4,7 @@ import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
 
 const App = Application.extend({
+  // LOG_TRANSITIONS: true,
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver

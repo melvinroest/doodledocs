@@ -1,10 +1,10 @@
 import Component from '@ember/component';
-import { disablePageScroll } from 'scroll-lock';
+import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 
 // When person is drawing, put everything else on non-clickable (and visually display it by greying it out)
 
 function init(canvas){
-  disablePageScroll();
+  disablePageScroll(); //note: need to enable it again on destroy
   let context = canvas.getContext('2d');
   canvas.style.width ='100%';
   canvas.style.height='100%';
@@ -17,11 +17,15 @@ function init(canvas){
 
 export default Component.extend({
   attributeBindings: ['style'],
-  style: "position: relative; height: 100vh;",
+  style: "position: relative;",
   didInsertElement() {
     this._super(...arguments);
     if(this.element.childNodes.length === 1 && this.element.childNodes[0].nodeName === "CANVAS"){
       init(this.element.childNodes[0]);  
     }
+  },
+  willDestroyElement() {
+    enablePageScroll();
+    this._super(...arguments);
   }
 });
