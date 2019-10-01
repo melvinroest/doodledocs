@@ -4,7 +4,7 @@ import Pressure from 'pressure';
 
 // When person is drawing, put everything else on non-clickable (and visually display it by greying it out)
 
-function init(canvas){
+function init(hud, canvas){
   disablePageScroll();
   let context = canvas.getContext('2d');
   canvas.style.width ='100%';
@@ -14,7 +14,10 @@ function init(canvas){
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = '#FFFBEB'; //for debug use: $55f
   context.fillRect(0, 0, canvas.width, canvas.height);
-  // initHud();
+  
+  //init hud
+  let hudContext = hud.getContext('2d');
+  hudContext.clearRect(0, 0, canvas.width, canvas.height);
 
   let lastX = 0;
   let lastY = 0;
@@ -89,7 +92,7 @@ function init(canvas){
     }
 
     function endDraw(e){
-      // hudContext.clearRect(0,0,canvas.width, canvas.height)
+      // hudContext.clearRect(0, 0, canvas.width, canvas.height)
       if(tool.started) {
         tool.started = false
       }
@@ -109,8 +112,6 @@ function init(canvas){
       if(inputDevice === 'stylus'){
 
         if(tool.started) {
-          // console.log('pencil/change')
-          // console.log(e)
        
           let mouseX = e._x
           let mouseY = e._y
@@ -181,7 +182,12 @@ function init(canvas){
         }  
       }
 
-      // drawHud(lineThickness, e._x, e._y)
+      // hudContext.clearRect(0,0,canvas.width, canvas.height)
+      hudContext.strokeStyle = "#f00"
+      hudContext.lineWidth = 1
+      hudContext.beginPath()
+      hudContext.rect(e._x - lineThickness/2, e._y - lineThickness/2, lineThickness + 5, lineThickness + 5)
+      hudContext.stroke()
       
     }
 
@@ -194,20 +200,6 @@ function init(canvas){
       endDraw(e)
     }
   } //end pencil()
-
-  function drawHud(lineThickness, x, y){
-    /* draw all circles */
-    hudContext.clearRect(0,0,canvas.width, canvas.height)
-    hudContext.strokeStyle = "#f00"
-    hudContext.lineWidth = 1
-    hudContext.beginPath()
-    let _x = x 
-    let _y = y 
-    // hudContext.ellipse(_x, _y, lineThickness * .8, lineThickness * .8, 0 * Math.PI/180, 0, Math.PI*2, true)
-    hudContext.rect(x - lineThickness/2, y - lineThickness/2, lineThickness + 5, lineThickness + 5)
-    hudContext.stroke()
-    
-  }
 
   function mousePosOnCanvas(e) {
     // Opera
@@ -234,8 +226,10 @@ export default Component.extend({
   style: "position: relative; height: 100vh",
   didInsertElement() {
     this._super(...arguments);
-    if(this.element.childNodes.length === 1 && this.element.childNodes[0].nodeName === "CANVAS"){
-      init(this.element.childNodes[0]);
+    if(this.element.children.length === 2 && this.element.children[0].nodeName === "CANVAS" && this.element.children[1].nodeName === "CANVAS"){
+      let hud = this.element.children[0];
+      let canvas = this.element.children[1];
+      init(hud, canvas);
     }
   },
   willDestroyElement() {
