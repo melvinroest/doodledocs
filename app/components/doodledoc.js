@@ -1,10 +1,11 @@
 import Component from '@ember/component';
 import { disablePageScroll, enablePageScroll } from 'scroll-lock';
+import Pressure from 'pressure';
 
 // When person is drawing, put everything else on non-clickable (and visually display it by greying it out)
 
 function init(canvas){
-  disablePageScroll(); //note: need to enable it again on destroy
+  disablePageScroll();
   let context = canvas.getContext('2d');
   canvas.style.width ='100%';
   canvas.style.height='100%';
@@ -13,15 +14,206 @@ function init(canvas){
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = '#55f';
   context.fillRect(0, 0, canvas.width, canvas.height);
-}
 
+  let lastX = 0;
+  let lastY = 0;
+  let pencilThickness = 1;
+  let pencilColor = '#000';
+  let lineThickness = pencilThickness;
+  let tool = new pencil();
+
+  canvas.addEventListener('pointerdown', e => {
+    console.log('custom', e.clientX, e.clientY)
+  })
+
+  //init pressure settings
+  let block = {
+    start: function(e){
+      console.log('start', e)
+      e.userInput = 'start';
+      mousePosOnCanvas(e);
+    },
+
+    change: function(force, e){
+      console.log('change', e.type, e)
+      e.userInput = 'change';
+      e.userForce = force;
+      mousePosOnCanvas(e)
+    },
+
+    startDeepPress: function(e){
+      e.userInput = 'startDeepPress';
+      mousePosOnCanvas(e);
+    },
+
+    endDeepPress: function(){
+      let e = {};
+      e.userInput = 'endDeepPress';
+      mousePosOnCanvas(e);
+    },
+
+    end: function(){
+      let e = {};
+      e.userInput = 'end';
+      console.log('end', e)
+      mousePosOnCanvas(e);
+    },
+
+    unsupported: function(){
+      this.innerHTML = 'Your device / browser does not support this :(';
+    }
+  }
+
+  Pressure.set(canvas, block);
+
+  function pencil() {
+    let currentTool = this
+    this.started = false
+
+    function startDraw(e){
+      currentTool.started = true
+      context.fillStyle = pencilColor
+      // lastX = e._x - e.target.offsetLeft
+      // lastY = e._y - e.target.offsetTop
+      lastX = e._x
+      lastY = e._y
+    }
+
+    function endDraw(e){
+      // hudContext.clearRect(0,0,canvas.width, canvas.height)
+      if(tool.started) {
+        tool.started = false
+      }
+    }
+
+    this.start = function(e) {
+      startDraw(e)
+    }
+
+    this.startDeepPress = function(e) {
+      startDraw(e)
+    }
+
+    this.change = function(e) {
+      // let inputDevice = e.touches[0].touchType
+      let inputDevice = 'stylus'
+      if(inputDevice === 'stylus'){
+
+        if(tool.started) {
+          // console.log('pencil/change')
+          // console.log(e)
+       
+          let mouseX = e._x
+          let mouseY = e._y
+
+
+          // find all points between        
+          let x1 = mouseX
+          let x2 = lastX
+          let y1 = mouseY
+          let y2 = lastY;
+
+
+          //steep: y > x in any direction
+          let steep = (Math.abs(y2 - y1) > Math.abs(x2 - x1))
+          
+          if(steep){
+            var x = x1
+            x1 = y1
+            y1 = x
+
+            var y = y2
+            y2 = x2
+            x2 = y
+          }
+
+          if(x1 > x2){
+            var x = x1
+            x1 = x2
+            x2 = x
+
+            var y = y1
+            y1 = y2
+            y2 = y
+          }
+
+          let dx = x2 - x1
+          let dy = Math.abs(y2 - y1)
+          let error = 0
+          let de = dy / dx
+          let yStep = -1
+          y = y1
+          
+          if(y1 < y2){
+            yStep = 1
+          }
+
+          lineThickness = lineThickness + 12 * e.userForce
+          for(var x = x1; x < x2; x++){
+            if(steep){
+              context.fillRect(y - lineThickness/2, x - lineThickness/2, lineThickness, lineThickness )
+            } 
+            else {
+              context.fillRect(x - lineThickness/2, y - lineThickness/2, lineThickness, lineThickness )
+            }
+            
+            error += de
+
+            if(error >= 0.5){
+              y += yStep;
+              error -= 1.0;
+            }
+          }
+          lineThickness = pencilThickness
+
+
+          lastX = mouseX
+          lastY = mouseY
+        }  
+      }
+
+      // drawHud(lineThickness, e._x, e._y)
+      
+    }
+
+
+    this.end = function(e) {
+      endDraw(e)
+    }
+
+    this.endDeepPress = function(e) {
+      endDraw(e)
+    }
+  } //end pencil()
+
+  function mousePosOnCanvas(e) {
+    // Opera
+    if (e.offsetX || e.offsetX == 0) {
+      e._x = e.offsetX;
+      e._y = e.offsetY;
+    }
+    // Firefox
+    else if (e.layerX || e.layerX == 0) {
+      e._x = e.layerX;
+      e._y = e.layerY;
+    } 
+
+    // Call the event handler of the tool
+    let func = tool[e.userInput]
+    if (func) {
+      func(e)
+    }
+  }
+
+
+}
 export default Component.extend({
   attributeBindings: ['style'],
-  style: "position: relative;",
+  style: "position: relative; height: 100vh",
   didInsertElement() {
     this._super(...arguments);
     if(this.element.childNodes.length === 1 && this.element.childNodes[0].nodeName === "CANVAS"){
-      init(this.element.childNodes[0]);  
+      init(this.element.childNodes[0]);
     }
   },
   willDestroyElement() {
