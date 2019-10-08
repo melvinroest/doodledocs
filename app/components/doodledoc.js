@@ -7,9 +7,13 @@ import Bugout from "bugout";
 
 function init(hud, canvas, b) {
   disablePageScroll();
+  console.log("bugout", b);
 
   b.on("message", (address, data) => {
-    partnerMakesChanges(data);
+    if (address !== b.addr) {
+      console.log("PARTNER IS MAKING CHANGES", address, b.addr);
+      partnerMakesChanges(data);
+    }
   });
 
   let context = canvas.getContext("2d");
@@ -132,93 +136,30 @@ function init(hud, canvas, b) {
     };
 
     this.change = function(e) {
+      let t1 = performance.now();
       // let inputDevice = e.touches[0].touchType
       let inputDevice = "stylus";
       if (inputDevice === "stylus") {
         if (tool.started) {
-          // console.log('pencil/change')
-          // console.log(e)
-
-          let mouseX = e._x;
-          let mouseY = e._y;
-
-          // find all points between
-          let x1 = mouseX;
-          let x2 = lastX;
-          let y1 = mouseY;
-          let y2 = lastY;
-
-          //steep: y > x in any direction
-          let steep = Math.abs(y2 - y1) > Math.abs(x2 - x1);
-
-          if (steep) {
-            var x = x1;
-            x1 = y1;
-            y1 = x;
-
-            var y = y2;
-            y2 = x2;
-            x2 = y;
-          }
-
-          if (x1 > x2) {
-            var x = x1;
-            x1 = x2;
-            x2 = x;
-
-            var y = y1;
-            y1 = y2;
-            y2 = y;
-          }
-
-          let dx = x2 - x1;
-          let dy = Math.abs(y2 - y1);
-          let error = 0;
-          let de = dy / dx;
-          let yStep = -1;
-          y = y1;
-
-          if (y1 < y2) {
-            yStep = 1;
-          }
-
-          lineThickness = lineThickness + 12 * e.userForce;
-          // y - lineThickness / 2;
-          let data = {
-            lineThickness: lineThickness,
-            pencilColor: pencilColor,
-            userForce: e.userForce,
-            debug: {
-              orientation: "steep"
-            }
+          let args = {
+            e,
+            lastX,
+            lastY,
+            lineThickness,
+            pencilColor,
+            context,
+            b,
+            pencilThickness,
+            isMakingOwnChanges: true
           };
-          for (let x = x1; x < x2; x++) {
-            if (steep) {
-              data.x = y;
-              data.y = x;
-              b.send(data);
-              context.fillRect(y, x, lineThickness, lineThickness);
-            } else {
-              data.x = x;
-              data.y = y;
-              b.send(data);
-              context.fillRect(x, y, lineThickness, lineThickness);
-            }
-
-            error += de;
-
-            if (error >= 0.5) {
-              y += yStep;
-              error -= 1.0;
-            }
-          }
-          lineThickness = pencilThickness;
-
-          lastX = mouseX;
-          lastY = mouseY;
+          let last = bresenhamsLineAlgorithm(args);
+          lastX = last.lastX;
+          lastY = last.lastY;
         }
       }
       drawHud(lineThickness, e._x, e._y);
+      let t2 = performance.now();
+      // console.log(`this.change: ${t2 - t1}`);
     };
 
     this.end = function(e) {
@@ -250,13 +191,19 @@ function init(hud, canvas, b) {
   }
 
   function partnerMakesChanges(data) {
-    let { x, y, lineThickness, pencilColor, userForce } = data;
-    if (pencilColor === "#000") {
-      pencilColor = "#f00";
-    }
-    context.fillStyle = pencilColor;
-    context.fillRect(x, y, lineThickness, lineThickness);
-    drawHud(lineThickness, x, y);
+    let { e, lineThickness, lastX, lastY } = data;
+    let args = {
+      e,
+      lastX,
+      lastY,
+      lineThickness,
+      pencilColor,
+      context,
+      b: undefined,
+      pencilThickness,
+      isMakingOwnChanges: false
+    };
+    bresenhamsLineAlgorithm(args);
   }
 
   function drawHud(lineThickness, x, y) {
@@ -290,7 +237,6 @@ export default Component.extend({
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
       let b = await initbugout();
-      console.log([hud, canvas, b]);
       document.getElementById("content").innerHTML = "";
       init(hud, canvas, b);
     }
@@ -301,6 +247,120 @@ export default Component.extend({
   }
 });
 
+function bresenhamsLineAlgorithm(args) {
+  // console.log('pencil/change')
+  // console.log(e)
+  let {
+    e,
+    lastX,
+    lastY,
+    lineThickness,
+    pencilColor,
+    context,
+    b,
+    pencilThickness,
+    isMakingOwnChanges
+  } = args;
+
+  let mouseX = e._x;
+  let mouseY = e._y;
+
+  // find all points between
+  let x1 = mouseX;
+  let x2 = lastX;
+  let y1 = mouseY;
+  let y2 = lastY;
+  let x = undefined;
+  let y = undefined;
+
+  //steep: y > x in any direction
+  let isSteep = Math.abs(y2 - y1) > Math.abs(x2 - x1);
+  console.log(
+    "steepness",
+    isSteep,
+    Math.abs(y2 - y1),
+    Math.abs(x2 - x1),
+    x1 - x2
+  );
+
+  if (isSteep) {
+    x = x1;
+    x1 = y1;
+    y1 = x;
+
+    y = y2;
+    y2 = x2;
+    x2 = y;
+  }
+
+  //can't be put into a variable, since it relies on the isSteep if-statement
+  if (x1 > x2) {
+    x = x1;
+    x1 = x2;
+    x2 = x;
+
+    y = y1;
+    y1 = y2;
+    y2 = y;
+  }
+
+  let dx = x2 - x1;
+  let dy = Math.abs(y2 - y1);
+  let error = 0;
+  let de = dy / dx;
+  let yStep = -1;
+  y = y1;
+
+  if (y1 < y2) {
+    yStep = 1;
+  }
+  if (!isMakingOwnChanges) {
+    console.log("PARTNER", args);
+  }
+
+  if (isMakingOwnChanges) {
+    let data = {
+      e,
+      lastX,
+      lastY,
+      lineThickness,
+      pencilColor,
+      b: undefined,
+      pencilThickness
+    };
+    //partnerMakesChanges
+    setTimeout(() => {
+      console.log("sending data", data);
+      b.send(data);
+    }, 0);
+  }
+  //some line thickness settings
+  lineThickness = lineThickness + 12 * e.userForce;
+  for (let x = x1; x < x2; x++) {
+    if (isSteep) {
+      //does up/down
+      context.fillRect(y, x, lineThickness, lineThickness);
+      //need to make it non-blocking
+    } else {
+      //does left/right
+      context.fillRect(x, y, lineThickness, lineThickness);
+      //need to make it non-blocking
+    }
+
+    error += de;
+
+    if (error >= 0.5) {
+      y += yStep;
+      error -= 1.0;
+    }
+  }
+  lineThickness = pencilThickness;
+
+  lastX = mouseX;
+  lastY = mouseY;
+  return { lastX, lastY };
+}
+
 async function initbugout() {
   let swarmId = "doodledocs"; //type in your own swarmId for it to work
   let b = new Bugout(swarmId);
@@ -309,7 +369,7 @@ async function initbugout() {
 
   b.once("message", function(address, msg) {
     let p = document.createElement("p");
-    p.innerHTML = `address ${address}: sends message ${msg}`;
+    p.innerHTML = `address ${address} is here`;
     document.getElementById("content").append(p);
   });
 
