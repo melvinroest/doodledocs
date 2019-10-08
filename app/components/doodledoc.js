@@ -7,6 +7,11 @@ import Bugout from "bugout";
 
 function init(hud, canvas, b) {
   disablePageScroll();
+
+  b.on("message", (address, data) => {
+    partnerMakesChanges(data);
+  });
+
   let context = canvas.getContext("2d");
   canvas.style.width = "100%";
   canvas.style.height = "100%";
@@ -43,7 +48,7 @@ function init(hud, canvas, b) {
   let lastX = 0;
   let lastY = 0;
   let pencilThickness = 1;
-  let pencilColor = "#000";
+  let pencilColor = "rgba(0, 0, 0, 0.33)";
   let lineThickness = pencilThickness;
   let tool = new pencil();
 
@@ -51,7 +56,7 @@ function init(hud, canvas, b) {
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("pencil").addEventListener(eventName, e => {
       pencilThickness = 1;
-      pencilColor = "#000";
+      pencilColor = "rgba(0, 0, 0, 0.33)";
     });
   });
   ["click", "touchstart"].forEach(function(eventName) {
@@ -178,21 +183,26 @@ function init(hud, canvas, b) {
           }
 
           lineThickness = lineThickness + 12 * e.userForce;
-          for (var x = x1; x < x2; x++) {
+          // y - lineThickness / 2;
+          let data = {
+            lineThickness: lineThickness,
+            pencilColor: pencilColor,
+            userForce: e.userForce,
+            debug: {
+              orientation: "steep"
+            }
+          };
+          for (let x = x1; x < x2; x++) {
             if (steep) {
-              context.fillRect(
-                y - lineThickness / 2,
-                x - lineThickness / 2,
-                lineThickness,
-                lineThickness
-              );
+              data.x = y;
+              data.y = x;
+              b.send(data);
+              context.fillRect(y, x, lineThickness, lineThickness);
             } else {
-              context.fillRect(
-                x - lineThickness / 2,
-                y - lineThickness / 2,
-                lineThickness,
-                lineThickness
-              );
+              data.x = x;
+              data.y = y;
+              b.send(data);
+              context.fillRect(x, y, lineThickness, lineThickness);
             }
 
             error += de;
@@ -208,18 +218,7 @@ function init(hud, canvas, b) {
           lastY = mouseY;
         }
       }
-
-      hudContext.clearRect(0, 0, canvas.width, canvas.height);
-      hudContext.strokeStyle = "#f00";
-      hudContext.lineWidth = 1;
-      hudContext.beginPath();
-      hudContext.rect(
-        e._x - lineThickness / 2,
-        e._y - lineThickness / 2,
-        lineThickness + 5,
-        lineThickness + 5
-      );
-      hudContext.stroke();
+      drawHud(lineThickness, e._x, e._y);
     };
 
     this.end = function(e) {
@@ -248,6 +247,33 @@ function init(hud, canvas, b) {
     if (func) {
       func(e);
     }
+  }
+
+  function partnerMakesChanges(data) {
+    let { x, y, lineThickness, pencilColor, userForce } = data;
+    if (pencilColor === "#000") {
+      pencilColor = "#f00";
+    }
+    context.fillStyle = pencilColor;
+    context.fillRect(x, y, lineThickness, lineThickness);
+    drawHud(lineThickness, x, y);
+  }
+
+  function drawHud(lineThickness, x, y) {
+    /* draw all circles */
+    hudContext.clearRect(0, 0, canvas.width, canvas.height);
+    hudContext.strokeStyle = "#f00";
+    hudContext.lineWidth = 1;
+    hudContext.beginPath();
+    let _x = x;
+    let _y = y;
+    hudContext.rect(
+      x - lineThickness / 2,
+      y - lineThickness / 2,
+      lineThickness + 5,
+      lineThickness + 5
+    );
+    hudContext.stroke();
   }
 }
 
@@ -281,7 +307,7 @@ async function initbugout() {
 
   // It's always nice to inspect what's there
 
-  b.on("message", function(address, msg) {
+  b.once("message", function(address, msg) {
     let p = document.createElement("p");
     p.innerHTML = `address ${address}: sends message ${msg}`;
     document.getElementById("content").append(p);
