@@ -11,9 +11,14 @@ function init(hud, canvas, b) {
 
   b.on("message", (address, data) => {
     if (address !== b.addr) {
-      console.log("PARTNER IS MAKING CHANGES", address, b.addr);
       partnerMakesChanges(data);
     }
+  });
+
+  b.on("seen", address => {
+    let p = document.createElement("p");
+    p.innerHTML = `Bugout address ${address} connected`;
+    document.getElementById("content").append(p);
   });
 
   let context = canvas.getContext("2d");
@@ -191,19 +196,11 @@ function init(hud, canvas, b) {
   }
 
   function partnerMakesChanges(data) {
-    let { e, lineThickness, lastX, lastY } = data;
-    let args = {
-      e,
-      lastX,
-      lastY,
-      lineThickness,
-      pencilColor,
-      context,
-      b: undefined,
-      pencilThickness,
-      isMakingOwnChanges: false
-    };
-    bresenhamsLineAlgorithm(args);
+    data.context = context;
+    data.isMakingOwnChanges = false;
+    data.b = undefined;
+    data.context.fillStyle = data.pencilColor;
+    bresenhamsLineAlgorithm(data);
   }
 
   function drawHud(lineThickness, x, y) {
@@ -227,7 +224,7 @@ function init(hud, canvas, b) {
 export default Component.extend({
   attributeBindings: ["style"],
   style: "position: relative; height: 100vh",
-  async didInsertElement() {
+  didInsertElement() {
     this._super(...arguments);
     if (
       this.element.children.length === 2 &&
@@ -236,7 +233,7 @@ export default Component.extend({
     ) {
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
-      let b = await initbugout();
+      let b = initBugout();
       document.getElementById("content").innerHTML = "";
       init(hud, canvas, b);
     }
@@ -264,7 +261,6 @@ function bresenhamsLineAlgorithm(args) {
 
   let mouseX = e._x;
   let mouseY = e._y;
-
   // find all points between
   let x1 = mouseX;
   let x2 = lastX;
@@ -274,16 +270,10 @@ function bresenhamsLineAlgorithm(args) {
   let y = undefined;
 
   //steep: y > x in any direction
-  let isSteep = Math.abs(y2 - y1) > Math.abs(x2 - x1);
-  console.log(
-    "steepness",
-    isSteep,
-    Math.abs(y2 - y1),
-    Math.abs(x2 - x1),
-    x1 - x2
-  );
+  let isSteep = Math.abs(y2 - y1) >= Math.abs(x2 - x1);
 
   if (isSteep) {
+    console.log("steep", x);
     x = x1;
     x1 = y1;
     y1 = x;
@@ -294,7 +284,8 @@ function bresenhamsLineAlgorithm(args) {
   }
 
   //can't be put into a variable, since it relies on the isSteep if-statement
-  if (x1 > x2) {
+  if (x1 >= x2) {
+    console.log("left > right", x);
     x = x1;
     x1 = x2;
     x2 = x;
@@ -311,12 +302,11 @@ function bresenhamsLineAlgorithm(args) {
   let yStep = -1;
   y = y1;
 
-  if (y1 < y2) {
+  if (y1 <= y2) {
     yStep = 1;
   }
-  if (!isMakingOwnChanges) {
-    console.log("PARTNER", args);
-  }
+
+  console.log(x, x1, x2, y, y1, y2);
 
   if (isMakingOwnChanges) {
     let data = {
@@ -328,13 +318,14 @@ function bresenhamsLineAlgorithm(args) {
       b: undefined,
       pencilThickness
     };
-    //partnerMakesChanges
+    // partnerMakesChanges
     setTimeout(() => {
       console.log("sending data", data);
       b.send(data);
     }, 0);
   }
   //some line thickness settings
+  // alert(`${x}, ${y}, ${lineThickness}`);
   lineThickness = lineThickness + 12 * e.userForce;
   for (let x = x1; x < x2; x++) {
     if (isSteep) {
@@ -361,23 +352,8 @@ function bresenhamsLineAlgorithm(args) {
   return { lastX, lastY };
 }
 
-async function initbugout() {
+function initBugout() {
   let swarmId = "doodledocs"; //type in your own swarmId for it to work
   let b = new Bugout(swarmId);
-
-  // It's always nice to inspect what's there
-
-  b.once("message", function(address, msg) {
-    let p = document.createElement("p");
-    p.innerHTML = `address ${address} is here`;
-    document.getElementById("content").append(p);
-  });
-
-  // wait for peer list -- yes, with a setTimeout. No I will not apologize ;-)
-  return new Promise(resolve => {
-    setTimeout(() => {
-      b.send("Hello World!");
-      resolve(b);
-    }, 3000);
-  });
+  return b;
 }
