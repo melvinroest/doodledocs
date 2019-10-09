@@ -52,7 +52,5 @@
   "engines": {
     "node": "8.* || >= 10.*"
   },
-  "dependencies": {
-    "pressure": "^2.1.2"
-  }
+  "dependencies": {}
 }
