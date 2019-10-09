@@ -1,5 +1,6 @@
 import Service from "@ember/service";
 import Bugout from "bugout";
+import io from "socket.io-client";
 const TRANSMISSIONMODE = Object.freeze({ P2P: "p2p", SERVER: "server" });
 
 function initBugout() {
@@ -26,14 +27,15 @@ export default Service.extend({
     if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
       this.transmissionInstance = initBugout();
     } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-      //sockets
+      let host = "http://localhost:8888"; //need to put this into an env file
+      this.transmissionInstance = io(host);
     }
   },
   send(data) {
     if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
       this.transmissionInstance.send(data);
     } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-      //sockets
+      this.transmissionInstance.emit("message", data);
     }
   },
   onMessage(cb) {
@@ -44,7 +46,9 @@ export default Service.extend({
         }
       });
     } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-      //sockets
+      this.transmissionInstance.on("message", data => {
+        cb(data);
+      });
     }
   }
 });

@@ -232,7 +232,7 @@ export default Component.extend({
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
       let transmissionService = this.get("transmissionService");
-      transmissionService.init(transmissionService.TRANSMISSIONMODE.P2P);
+      transmissionService.init(transmissionService.TRANSMISSIONMODE.SERVER);
       init.call(this, hud, canvas);
     }
   },
