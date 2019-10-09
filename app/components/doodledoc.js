@@ -1,24 +1,16 @@
 import Component from "@ember/component";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import Pressure from "pressure";
-import Bugout from "bugout";
+import { computed } from "@ember/object";
+import { getOwner } from "@ember/application";
+import Ember from "ember";
 
 // When person is drawing, put everything else on non-clickable (and visually display it by greying it out)
 
-function init(hud, canvas, b) {
+function init(hud, canvas) {
   disablePageScroll();
-  console.log("bugout", b);
-
-  b.on("message", (address, data) => {
-    if (address !== b.addr) {
-      partnerMakesChanges(data);
-    }
-  });
-
-  b.on("seen", address => {
-    let p = document.createElement("p");
-    p.innerHTML = `Bugout address ${address} connected`;
-    document.getElementById("content").append(p);
+  this.get("transmissionService").onMessage((data, address) => {
+    partnerMakesChanges(data);
   });
 
   let context = canvas.getContext("2d");
@@ -77,36 +69,37 @@ function init(hud, canvas, b) {
 
   //init pressure settings
   let block = {
-    start: function(e) {
+    start: e => {
       e.userInput = "start";
-      mousePosOnCanvas(e);
+      mousePosOnCanvas.call(this, e);
     },
 
-    change: function(force, e) {
+    change: (force, e) => {
       e.userInput = "change";
       e.userForce = force;
-      mousePosOnCanvas(e);
+      mousePosOnCanvas.call(this, e);
     },
 
-    startDeepPress: function(e) {
+    startDeepPress: e => {
       e.userInput = "startDeepPress";
-      mousePosOnCanvas(e);
+      mousePosOnCanvas.call(this, e);
     },
 
-    endDeepPress: function() {
+    endDeepPress: () => {
       let e = {};
       e.userInput = "endDeepPress";
-      mousePosOnCanvas(e);
+      mousePosOnCanvas.call(this, e);
     },
 
-    end: function() {
+    end: () => {
+      let that = this;
       let e = {};
       e.userInput = "end";
       console.log("end", e);
-      mousePosOnCanvas(e);
+      mousePosOnCanvas.call(this, e);
     },
 
-    unsupported: function() {
+    unsupported: () => {
       this.innerHTML = "Your device / browser does not support this :(";
     }
   };
@@ -153,11 +146,10 @@ function init(hud, canvas, b) {
             lineThickness,
             pencilColor,
             context,
-            b,
             pencilThickness,
             isMakingOwnChanges: true
           };
-          let last = bresenhamsLineAlgorithm(args);
+          let last = bresenhamsLineAlgorithm.call(this, args);
           lastX = last.lastX;
           lastY = last.lastY;
         }
@@ -189,7 +181,7 @@ function init(hud, canvas, b) {
     }
 
     // Call the event handler of the tool
-    let func = tool[e.userInput];
+    let func = tool[e.userInput].bind(this);
     if (func) {
       func(e);
     }
@@ -200,7 +192,7 @@ function init(hud, canvas, b) {
     data.isMakingOwnChanges = false;
     data.b = undefined;
     data.context.fillStyle = data.pencilColor;
-    bresenhamsLineAlgorithm(data);
+    bresenhamsLineAlgorithm.call(this, data);
   }
 
   function drawHud(lineThickness, x, y) {
@@ -222,6 +214,12 @@ function init(hud, canvas, b) {
 }
 
 export default Component.extend({
+  //So I can't use arrow functions because the this object is bound to the function or something?
+  //That is quite odd...
+  transmissionService: computed(function() {
+    let owner = getOwner(this);
+    return owner.lookup(`service:transmission-service`);
+  }),
   attributeBindings: ["style"],
   style: "position: relative; height: 100vh",
   didInsertElement() {
@@ -233,9 +231,9 @@ export default Component.extend({
     ) {
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
-      let b = initBugout();
-      document.getElementById("content").innerHTML = "";
-      init(hud, canvas, b);
+      let transmissionService = this.get("transmissionService");
+      transmissionService.init(transmissionService.TRANSMISSIONMODE.P2P);
+      init.call(this, hud, canvas);
     }
   },
   willDestroyElement() {
@@ -315,13 +313,12 @@ function bresenhamsLineAlgorithm(args) {
       lastY,
       lineThickness,
       pencilColor,
-      b: undefined,
       pencilThickness
     };
     // partnerMakesChanges
     setTimeout(() => {
       console.log("sending data", data);
-      b.send(data);
+      this.get("transmissionService").send(data);
     }, 0);
   }
   //some line thickness settings
@@ -350,10 +347,4 @@ function bresenhamsLineAlgorithm(args) {
   lastX = mouseX;
   lastY = mouseY;
   return { lastX, lastY };
-}
-
-function initBugout() {
-  let swarmId = "doodledocs"; //type in your own swarmId for it to work
-  let b = new Bugout(swarmId);
-  return b;
 }

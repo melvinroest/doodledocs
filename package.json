@@ -52,5 +52,7 @@
   "engines": {
     "node": "8.* || >= 10.*"
   },
-  "dependencies": {}
+  "dependencies": {
+    "socket-io": "^1.0.0"
+  }
 }
