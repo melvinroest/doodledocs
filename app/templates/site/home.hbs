@@ -1,13 +1,14 @@
 <section class="grid-container grid-clearfix">
   <div class="col2">
     <h1>Draw together on the web</h1>
-    <p>Doodle Docs allows you to sketch and collaborate with your pressure sensitive stylus-powered tablet or your laptop.</p>
+    <p>Doodle Docs allows you to sketch and collaborate with your pressure sensitive stylus-powered tablet or your
+      laptop.</p>
     <button>
-      {{#link-to "app.doc" class="button"}}
-        <div>
-          <img src="/doodle docs logo.png" />
-          <div>Open New Doodle Doc</div>
-        </div>
+      {{#link-to "app.doc" this.model.randomURL class="button"}}
+      <div>
+        <img src="/doodle docs logo.png" />
+        <div>Open New Doodle Doc</div>
+      </div>
       {{/link-to}}
     </button>
   </div>
@@ -18,10 +19,10 @@
 <section class="blue">
   <div class="grid-container grid-clearfix">
     <h1 class="center">Examples</h1>
-    {{#each this.model as |example|}}
-      <ExampleImage @caption={{example.caption}} >
-        <img src={{example.image}} />
-      </ExampleImage>
+    {{#each this.model.examples as |example|}}
+    <ExampleImage @caption={{example.caption}}>
+      <img src={{example.image}} />
+    </ExampleImage>
     {{/each}}
   </div>
 </section>
