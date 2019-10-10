@@ -9,7 +9,7 @@ import Ember from "ember";
 
 function init(hud, canvas) {
   disablePageScroll();
-  this.get("transmissionService").onMessage((data, address) => {
+  this.get("transmissionService").onReceivingMessage((data, address) => {
     partnerMakesChanges(data);
   });
 
@@ -191,6 +191,7 @@ function init(hud, canvas) {
     data.context = context;
     data.isMakingOwnChanges = false;
     data.b = undefined;
+    // data.context.fillStyle = "red"; //debug
     data.context.fillStyle = data.pencilColor;
     bresenhamsLineAlgorithm.call(this, data);
   }
@@ -232,7 +233,7 @@ export default Component.extend({
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
       let transmissionService = this.get("transmissionService");
-      transmissionService.init(transmissionService.TRANSMISSIONMODE.SERVER);
+      transmissionService.startService("SERVER");
       init.call(this, hud, canvas);
     }
   },

@@ -1,7 +1,6 @@
 import Service from "@ember/service";
 import Bugout from "bugout";
-import io from "socket.io-client";
-const TRANSMISSIONMODE = Object.freeze({ P2P: "p2p", SERVER: "server" });
+const TRANSMISSIONMODE = Object.freeze({ P2P: "P2P", SERVER: "SERVER" });
 
 function initBugout() {
   let swarmId = "doodledocs"; //type in your own swarmId for it to work
@@ -14,41 +13,103 @@ function initBugout() {
   return b;
 }
 
+function constructDataMessage(channel, method, data) {
+  const message = {
+    command: "message",
+    identifier: {
+      channel: channel
+    },
+    data: {
+      action: method,
+      args: data
+    }
+  };
+  return createMessage(message);
+}
+
+function createMessage(message) {
+  let entries = Object.entries(message);
+  for (let i = 0; i < entries.length; i++) {
+    let key = entries[i][0];
+    let value = entries[i][1];
+    if (key !== "command") {
+      message[key] = JSON.stringify(value);
+    }
+  }
+  // console.log(JSON.stringify(message));
+  return JSON.stringify(message);
+}
+
+function initSocket(host) {
+  let socket = new WebSocket(host);
+  socket.onopen = event => {
+    socket.send(
+      createMessage({
+        command: "subscribe",
+        identifier: {
+          channel: "MessageChannel"
+        }
+      })
+    );
+    socket.send(constructDataMessage("MessageChannel", "ping", "HELLO WORLD!"));
+  };
+  return socket;
+}
+
 export default Service.extend({
   TRANSMISSIONMODE,
 
-  init(transmissionSetting) {
-    this._super(...arguments);
-    this.transmissionSetting = transmissionSetting;
-    if (!this.transmissionSetting) {
-      this.transmissionMode = TRANSMISSIONMODE.P2P;
-    }
-
-    if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
-      this.transmissionInstance = initBugout();
-    } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-      let host = "http://localhost:8888"; //need to put this into an env file
-      this.transmissionInstance = io(host);
-    }
-  },
   send(data) {
     if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
       this.transmissionInstance.send(data);
     } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-      this.transmissionInstance.emit("message", data);
+      const message = constructDataMessage(
+        "MessageChannel",
+        "broadcastData",
+        data
+      );
+      this.transmissionInstance.send(message);
     }
   },
-  onMessage(cb) {
+  onReceivingMessage(cb) {
     if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
-      this.transmissionInstance.on("message", (address, data) => {
+      let bugoutInstance = this.transmissionInstance;
+      bugoutInstance.on("message", (address, data) => {
         if (address !== this.transmissionInstance.addr) {
           cb(data, address);
         }
       });
     } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-      this.transmissionInstance.on("message", data => {
-        cb(data);
-      });
+      let socket = this.transmissionInstance;
+      socket.onmessage = data => {
+        const parsedData = JSON.parse(data.data);
+        if (
+          parsedData.type !== "ping" &&
+          parsedData.type !== "welcome" &&
+          parsedData.type !== "confirm_subscription"
+        ) {
+          cb(parsedData.message.args);
+        }
+      };
     }
+  },
+  startService(transmissionSetting) {
+    if (!this.start) {
+      this.transmissionSetting = transmissionSetting || TRANSMISSIONMODE.P2P;
+
+      console.log("transmission", this.transmissionSetting);
+      if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
+        this.transmissionInstance = initBugout();
+      } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
+        let host = "ws://localhost:8888/websocket"; //need to put this into an env file
+        this.transmissionInstance = initSocket(host);
+      }
+    }
+    this.start = true;
+  },
+  init() {
+    this._super(...arguments);
+    this.transmissionSetting = undefined;
+    this.start = false;
   }
 });
