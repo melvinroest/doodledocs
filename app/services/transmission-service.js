@@ -41,17 +41,19 @@ function createMessage(message) {
 }
 
 function initSocket(host) {
+  //bug: I am not resubscribing when we're switching back and forth in the browser
   let socket = new WebSocket(host);
   socket.onopen = event => {
     socket.send(
       createMessage({
         command: "subscribe",
         identifier: {
-          channel: "MessageChannel"
+          channel: "MessageChannel",
+          urlPath: `dd:${window.location.pathname.split("dd:")[1]}`
         }
       })
     );
-    socket.send(constructDataMessage("MessageChannel", "ping", "HELLO WORLD!"));
+    // socket.send(constructDataMessage("MessageChannel", "ping", "HELLO WORLD!"));
   };
   return socket;
 }
