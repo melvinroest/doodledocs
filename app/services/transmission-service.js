@@ -13,11 +13,12 @@ function initBugout() {
   return b;
 }
 
-function constructDataMessage(channel, method, data) {
+function constructDataMessage(channel, method, data, urlPath) {
   const message = {
     command: "message",
     identifier: {
-      channel: channel
+      channel: channel,
+      urlPath
     },
     data: {
       action: method,
@@ -68,7 +69,8 @@ export default Service.extend({
       const message = constructDataMessage(
         "MessageChannel",
         "broadcastData",
-        data
+        data,
+        `dd:${window.location.pathname.split("dd:")[1]}`
       );
       this.transmissionInstance.send(message);
     }

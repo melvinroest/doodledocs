@@ -202,12 +202,10 @@ function init(hud, canvas) {
     hudContext.strokeStyle = "#f00";
     hudContext.lineWidth = 1;
     hudContext.beginPath();
-    // const adjustedX = x - lineThickness / 2;
-    // const adjustedY = y - lineThickness / 2;
-    const adjustedX = x - lineThickness / 2;
-    const adjustedY = y - lineThickness / 2;
-    const adjustedSide = lineThickness;
-    hudContext.rect(adjustedX, adjustedY, adjustedSide, adjustedSide);
+
+    // need adjustX & Y for tool overlay
+    const adj = lineThickness / 2;
+    hudContext.rect(x - adj, y - adj, lineThickness, lineThickness);
     hudContext.stroke();
   }
 }
@@ -323,6 +321,7 @@ function bresenhamsLineAlgorithm(args) {
   //some line thickness settings
   // alert(`${x}, ${y}, ${lineThickness}`);
   lineThickness = lineThickness + 8 * e.userForce;
+  // need adj for tool overlay
   const adj = lineThickness / 2;
   for (let x = x1; x < x2; x++) {
     if (isSteep) {
