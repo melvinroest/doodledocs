@@ -3,7 +3,7 @@ import Bugout from "bugout";
 const TRANSMISSIONMODE = Object.freeze({ P2P: "P2P", SERVER: "SERVER" });
 
 function initBugout() {
-  let swarmId = "doodledocs"; //type in your own swarmId for it to work
+  let swarmId = `dd:${window.location.pathname.split("dd:")[1]}`; //type in your own swarmId for it to work
   let b = new Bugout(swarmId);
   b.on("seen", address => {
     let p = document.createElement("p");
@@ -42,7 +42,6 @@ function createMessage(message) {
 }
 
 function initSocket(host) {
-  console.log("initSocket", host);
   let socket = new WebSocket(host);
   socket.onopen = event => {
     socket.send(
@@ -103,7 +102,6 @@ export default Service.extend({
     //debug
     // this.transmissionSetting = TRANSMISSIONMODE.P2P;
 
-    console.log("transmission", this.transmissionSetting);
     if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
       this.transmissionInstance = initBugout();
     } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
@@ -114,7 +112,6 @@ export default Service.extend({
     this.start = true;
   },
   init() {
-    //To do: caching
     this._super(...arguments);
     this.transmissionSetting = undefined;
   }

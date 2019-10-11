@@ -24,7 +24,9 @@ export default Component.extend({
       let hud = this.element.children[0];
       let canvas = this.element.children[1];
       let transmissionService = this.get("transmissionService");
-      transmissionService.startService("SERVER");
+      transmissionService.startService(
+        transmissionService.TRANSMISSIONMODE.P2P
+      );
       drawEngine.call(this, hud, canvas);
     }
   },
