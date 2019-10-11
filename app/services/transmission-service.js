@@ -42,7 +42,7 @@ function createMessage(message) {
 }
 
 function initSocket(host) {
-  //bug: I am not resubscribing when we're switching back and forth in the browser
+  console.log("initSocket", host);
   let socket = new WebSocket(host);
   socket.onopen = event => {
     socket.send(
@@ -98,25 +98,24 @@ export default Service.extend({
     }
   },
   startService(transmissionSetting) {
-    if (!this.start) {
-      this.transmissionSetting = transmissionSetting || TRANSMISSIONMODE.P2P;
+    this.transmissionSetting = transmissionSetting || TRANSMISSIONMODE.P2P;
 
-      //debug
-      // this.transmissionSetting = TRANSMISSIONMODE.P2P;
+    //debug
+    // this.transmissionSetting = TRANSMISSIONMODE.P2P;
 
-      console.log("transmission", this.transmissionSetting);
-      if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
-        this.transmissionInstance = initBugout();
-      } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
-        let host = "ws://localhost:8888/websocket"; //need to put this into an env file
-        this.transmissionInstance = initSocket(host);
-      }
+    console.log("transmission", this.transmissionSetting);
+    if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
+      this.transmissionInstance = initBugout();
+    } else if (this.transmissionSetting === TRANSMISSIONMODE.SERVER) {
+      let host = "ws://localhost:8888/websocket"; //need to put this into an env file
+      this.transmissionInstance = initSocket(host);
     }
+
     this.start = true;
   },
   init() {
+    //To do: caching
     this._super(...arguments);
     this.transmissionSetting = undefined;
-    this.start = false;
   }
 });

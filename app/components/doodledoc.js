@@ -13,7 +13,7 @@ export default Component.extend({
   }),
   attributeBindings: ["style"],
   style: "position: relative; height: 100vh",
-  didInsertElement() {
+  didRender() {
     this._super(...arguments);
     disablePageScroll();
     if (
