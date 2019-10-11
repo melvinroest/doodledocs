@@ -1,7 +1,8 @@
 import Pressure from "pressure";
 
 export default function init(hud, canvas) {
-  this.get("transmissionService").onReceivingMessage((data, address) => {
+  const transmissionService = this.get("transmissionService");
+  transmissionService.onReceivingMessage((data, address) => {
     partnerMakesChanges(data);
   });
 
@@ -139,7 +140,8 @@ export default function init(hud, canvas) {
             pencilColor,
             context,
             pencilThickness,
-            isMakingOwnChanges: true
+            isMakingOwnChanges: true,
+            transmissionService
           };
           let last = bresenhamsLineAlgorithm.call(this, args);
           lastX = last.lastX;
@@ -185,6 +187,7 @@ export default function init(hud, canvas) {
     data.b = undefined;
     // data.context.fillStyle = "red"; //debug
     data.context.fillStyle = data.pencilColor;
+    data.transmissionService = transmissionService;
     bresenhamsLineAlgorithm.call(this, data);
   }
 
@@ -212,9 +215,9 @@ function bresenhamsLineAlgorithm(args) {
     lineThickness,
     pencilColor,
     context,
-    b,
     pencilThickness,
-    isMakingOwnChanges
+    isMakingOwnChanges,
+    transmissionService
   } = args;
 
   let mouseX = e._x;
@@ -268,7 +271,11 @@ function bresenhamsLineAlgorithm(args) {
 
   if (isMakingOwnChanges) {
     let data = {
-      e,
+      e: {
+        _x: e._x,
+        _y: e._y,
+        userForce: e.userForce
+      },
       lastX,
       lastY,
       lineThickness,
@@ -278,8 +285,8 @@ function bresenhamsLineAlgorithm(args) {
     // partnerMakesChanges
     setTimeout(() => {
       console.log("sending data", data);
-      this.get("transmissionService").send(data);
-    }, 0);
+      transmissionService.send(data);
+    }, 1);
   }
   //some line thickness settings
   // alert(`${x}, ${y}, ${lineThickness}`);
