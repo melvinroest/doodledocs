@@ -99,6 +99,9 @@ export default Service.extend({
     if (!this.start) {
       this.transmissionSetting = transmissionSetting || TRANSMISSIONMODE.P2P;
 
+      //debug
+      // this.transmissionSetting = TRANSMISSIONMODE.P2P;
+
       console.log("transmission", this.transmissionSetting);
       if (this.transmissionSetting === TRANSMISSIONMODE.P2P) {
         this.transmissionInstance = initBugout();

@@ -202,14 +202,12 @@ function init(hud, canvas) {
     hudContext.strokeStyle = "#f00";
     hudContext.lineWidth = 1;
     hudContext.beginPath();
-    let _x = x;
-    let _y = y;
-    hudContext.rect(
-      x - lineThickness / 2,
-      y - lineThickness / 2,
-      lineThickness + 5,
-      lineThickness + 5
-    );
+    // const adjustedX = x - lineThickness / 2;
+    // const adjustedY = y - lineThickness / 2;
+    const adjustedX = x - lineThickness / 2;
+    const adjustedY = y - lineThickness / 2;
+    const adjustedSide = lineThickness;
+    hudContext.rect(adjustedX, adjustedY, adjustedSide, adjustedSide);
     hudContext.stroke();
   }
 }
@@ -324,16 +322,15 @@ function bresenhamsLineAlgorithm(args) {
   }
   //some line thickness settings
   // alert(`${x}, ${y}, ${lineThickness}`);
-  lineThickness = lineThickness + 12 * e.userForce;
+  lineThickness = lineThickness + 8 * e.userForce;
+  const adj = lineThickness / 2;
   for (let x = x1; x < x2; x++) {
     if (isSteep) {
       //does up/down
-      context.fillRect(y, x, lineThickness, lineThickness);
-      //need to make it non-blocking
+      context.fillRect(y - adj, x - adj, lineThickness, lineThickness);
     } else {
       //does left/right
-      context.fillRect(x, y, lineThickness, lineThickness);
-      //need to make it non-blocking
+      context.fillRect(x - adj, y - adj, lineThickness, lineThickness);
     }
 
     error += de;
