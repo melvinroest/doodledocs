@@ -14,7 +14,7 @@ module.exports = function(defaults) {
     }
   });
 
-  app.import("vendor/edited libs/pressure/pressure.js", {
+  app.import("vendor/edited/pressure/pressure.js", {
     using: [{ transformation: "amd", as: "pressure" }]
   });
 
