@@ -7,6 +7,7 @@ var inherits = require("inherits");
 var bs58 = require("bs58");
 var bs58check = require("bs58check");
 var ripemd160 = require("ripemd160");
+const HAS_NO_SIG = true;
 
 inherits(Bugout, EventEmitter);
 
@@ -256,7 +257,9 @@ function makePacket(bugout, params) {
   }
   pe = bencode.encode(p);
   return bencode.encode({
-    s: nacl.sign.detached(pe, bugout.keyPair.secretKey),
+    s: HAS_NO_SIG
+      ? undefined
+      : nacl.sign.detached(pe, bugout.keyPair.secretKey),
     p: pe
   });
 }
@@ -323,11 +326,9 @@ function onMessage(bugout, identifier, wire, message) {
       var packet = bencode.decode(unpacked.p);
       var pk = packet.pk.toString();
       var id = packet.i.toString();
-      var checksig = nacl.sign.detached.verify(
-        unpacked.p,
-        unpacked.s,
-        bs58.decode(pk)
-      );
+      var checksig = HAS_NO_SIG
+        ? true
+        : nacl.sign.detached.verify(unpacked.p, unpacked.s, bs58.decode(pk));
       var checkid = id == identifier;
       var checktime = packet.t + bugout.timeout > t;
       debug("packet", packet);

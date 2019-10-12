@@ -3,7 +3,9 @@ import Pressure from "pressure";
 export default function init(hud, canvas) {
   const transmissionService = this.get("transmissionService");
   transmissionService.onReceivingMessage((data, address) => {
-    partnerMakesChanges(data);
+    requestAnimationFrame(() => {
+      partnerMakesChanges(data);
+    });
   });
 
   let context = canvas.getContext("2d");
@@ -128,8 +130,8 @@ export default function init(hud, canvas) {
 
     this.change = function(e) {
       let t1 = performance.now();
-      // let inputDevice = e.touches[0].touchType
-      let inputDevice = "stylus";
+      let inputDevice = e.touches[0].touchType;
+      // let inputDevice = "stylus";
       if (inputDevice === "stylus") {
         if (tool.started) {
           let args = {
@@ -234,7 +236,6 @@ function bresenhamsLineAlgorithm(args) {
   let isSteep = Math.abs(y2 - y1) >= Math.abs(x2 - x1);
 
   if (isSteep) {
-    console.log("steep", x);
     x = x1;
     x1 = y1;
     y1 = x;
@@ -246,7 +247,6 @@ function bresenhamsLineAlgorithm(args) {
 
   //can't be put into a variable, since it relies on the isSteep if-statement
   if (x1 >= x2) {
-    console.log("left > right", x);
     x = x1;
     x1 = x2;
     x2 = x;
@@ -267,8 +267,6 @@ function bresenhamsLineAlgorithm(args) {
     yStep = 1;
   }
 
-  console.log(x, x1, x2, y, y1, y2);
-
   if (isMakingOwnChanges) {
     let data = {
       e: {
@@ -283,10 +281,9 @@ function bresenhamsLineAlgorithm(args) {
       pencilThickness
     };
     // partnerMakesChanges
-    setTimeout(() => {
-      console.log("sending data", data);
+    requestAnimationFrame(() => {
       transmissionService.send(data);
-    }, 1);
+    });
   }
   //some line thickness settings
   // alert(`${x}, ${y}, ${lineThickness}`);
