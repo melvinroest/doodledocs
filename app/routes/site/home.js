@@ -1,4 +1,5 @@
 import Route from "@ember/routing/route";
+import Config from "doodledocs-app/config/environment";
 
 function randomString(length, chars) {
   var mask = "";
@@ -17,23 +18,23 @@ export default Route.extend({
     let data = [
       {
         caption: "Made with laptop (no pressure sensitivity)",
-        image: "/ex1.png"
+        image: "ex1.png"
       },
       {
         caption: "Collaborative Quick sketch with iPad",
-        image: "/ex2.png"
+        image: "ex2.png"
       },
       {
         caption: "Collaborative drawing with iPad",
-        image: "/ex3.png"
+        image: "ex3.png"
       },
       {
         caption: "Solo drawing with iPad, no pressure sensitivity",
-        image: "/ex4.png"
+        image: "ex4.png"
       },
       {
         caption: "Solo drawing with iPad with pressure sensitivity",
-        image: "/ex5.png"
+        image: "ex5.png"
       }
     ];
     let result = [];
@@ -42,9 +43,13 @@ export default Route.extend({
       let randomIndex = [Math.floor(Math.random() * data.length)];
       result.push(data.splice(randomIndex, 1)[0]);
     }
+    let swarmId = `dd:${randomString(8, "aA#!")}`;
+    if (Config.buildTarget === "gh-pages") {
+      swarmId = "gh-pages";
+    }
     return {
       examples: result,
-      randomURL: `dd:${randomString(8, "aA#!")}`
+      randomURL: swarmId
     };
   }
 });

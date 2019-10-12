@@ -130,8 +130,8 @@ export default function init(hud, canvas) {
 
     this.change = function(e) {
       let t1 = performance.now();
-      let inputDevice = e.touches[0].touchType;
-      // let inputDevice = "stylus";
+      // let inputDevice = e.touches[0].touchType;
+      let inputDevice = "stylus";
       if (inputDevice === "stylus") {
         if (tool.started) {
           let args = {

@@ -6,14 +6,14 @@
     <button>
       {{#link-to "app.doc" this.model.randomURL class="button"}}
       <div>
-        <img src="/doodle docs logo.png" />
+        <img src="{{this.target.location.rootURL}}doodle docs logo.png" />
         <div>Open New Doodle Doc</div>
       </div>
       {{/link-to}}
     </button>
   </div>
   <div class="col2 example">
-    <img src="/prototype-example1.gif" />
+    <img src="{{this.target.location.rootURL}}prototype-example1.gif" />
   </div>
 </section>
 <section class="blue">
@@ -21,7 +21,7 @@
     <h1 class="center">Examples</h1>
     {{#each this.model.examples as |example|}}
     <ExampleImage @caption={{example.caption}}>
-      <img src={{example.image}} />
+      <img src="{{this.target.location.rootURL}}{{example.image}}" />
     </ExampleImage>
     {{/each}}
   </div>
