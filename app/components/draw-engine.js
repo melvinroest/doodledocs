@@ -90,7 +90,6 @@ export default function init(hud, canvas) {
       let that = this;
       let e = {};
       e.userInput = "end";
-      console.log("end", e);
       mousePosOnCanvas.call(this, e);
     },
 
@@ -208,8 +207,10 @@ export default function init(hud, canvas) {
 }
 
 function bresenhamsLineAlgorithm(args) {
-  // console.log('pencil/change')
-  // console.log(e)
+  // method of explanation: draw a star from inside out, coord-system: * clock-wise quadrants starting with top vertical as 1, bottom vertical is 5
+  // How this algo works in short: it is able to draw
+  // 1 - 3 * and 5 - 7 * and then flips it on the y-axis if needed to produce
+  // 3 - 5 * and 8 - 1 *
   let {
     e,
     lastX,
@@ -224,7 +225,8 @@ function bresenhamsLineAlgorithm(args) {
 
   let mouseX = e._x;
   let mouseY = e._y;
-  // find all points between
+
+  // draws between below left horizontal and diagonal, 6-7 of *
   let x1 = mouseX;
   let x2 = lastX;
   let y1 = mouseY;
@@ -235,26 +237,29 @@ function bresenhamsLineAlgorithm(args) {
   //steep: y > x in any direction
   let isSteep = Math.abs(y2 - y1) >= Math.abs(x2 - x1);
 
+  //draws
+  // draws between top vertical and top right diagonal, 1-2 of *
   if (isSteep) {
     x = x1;
     x1 = y1;
     y1 = x;
-
     y = y2;
     y2 = x2;
     x2 = y;
   }
 
-  //can't be put into a variable, since it relies on the isSteep if-statement
+  // draws between right horizontal and diagonal, 2-3 of *
   if (x1 >= x2) {
     x = x1;
     x1 = x2;
     x2 = x;
-
     y = y1;
     y1 = y2;
     y2 = y;
   }
+
+  //testing combination of both if-statements
+  // draws between bottom vertical and bottom left diagonal, 5-6 of *
 
   let dx = x2 - x1;
   let dy = Math.abs(y2 - y1);
@@ -263,6 +268,7 @@ function bresenhamsLineAlgorithm(args) {
   let yStep = -1;
   y = y1;
 
+  //this allows for the flip
   if (y1 <= y2) {
     yStep = 1;
   }
@@ -301,6 +307,7 @@ function bresenhamsLineAlgorithm(args) {
 
     error += de;
 
+    //needed to enable fast drawing
     if (error >= 0.5) {
       y += yStep;
       error -= 1.0;
