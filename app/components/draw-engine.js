@@ -206,6 +206,7 @@ export default function init(hud, canvas) {
   }
 }
 
+// https://stackoverflow.com/questions/10122553/create-a-realistic-pencil-tool-for-a-painting-app-with-html5-canvas
 function bresenhamsLineAlgorithm(args) {
   // method of explanation: draw a star from inside out, coord-system: * clock-wise quadrants starting with top vertical as 1, bottom vertical is 5
   // How this algo works in short: it is able to draw
@@ -260,7 +261,6 @@ function bresenhamsLineAlgorithm(args) {
 
   //testing combination of both if-statements
   // draws between bottom vertical and bottom left diagonal, 5-6 of *
-
   let dx = x2 - x1;
   let dy = Math.abs(y2 - y1);
   let error = 0;
