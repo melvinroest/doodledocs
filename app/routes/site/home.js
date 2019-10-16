@@ -1,5 +1,4 @@
 import Route from "@ember/routing/route";
-import Config from "doodledocs-app/config/environment";
 
 function randomString(length, chars) {
   var mask = "";
