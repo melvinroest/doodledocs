@@ -27,7 +27,7 @@ export default Component.extend({
       transmissionService.startService(
         transmissionService.TRANSMISSIONMODE.P2P
       );
-      drawEngine.call(this, hud, canvas);
+      drawEngine.call(this, hud, canvas, transmissionService);
     }
   },
   willDestroyElement() {
