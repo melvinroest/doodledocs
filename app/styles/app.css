@@ -8,7 +8,9 @@ html {
   height: 100%;
 }
 
-html, body, p {
+html,
+body,
+p {
   margin: 0;
   padding: 0;
 }
@@ -32,7 +34,8 @@ h2 {
   }
 }
 
-.col2, .col3 {
+.col2,
+.col3 {
   text-align: center;
 }
 
@@ -58,7 +61,7 @@ h2 {
   .grid-clearfix:after {
     display: table;
     clear: both;
-    content: '';
+    content: "";
   }
 }
 
@@ -67,8 +70,9 @@ body {
   font-weight: 100;
 }
 
-header, footer {
-  background-color: #FFE74C;
+header,
+footer {
+  background-color: #ffe74c;
   width: 100%;
   padding: 20px;
 }
@@ -134,9 +138,9 @@ section button {
   display: inline-block;
   font-size: 1.25em;
   border-radius: 10px;
-  -webkit-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.75);
-  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
 }
 
 section button div {
@@ -166,8 +170,18 @@ button div {
   padding-right: 10px;
 }
 
+button div div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button span {
+  font-size: 0.5em;
+}
+
 .blue {
-  background-color: #EBFBFF;
+  background-color: #ebfbff;
 }
 
 .example img {
@@ -191,11 +205,10 @@ button div {
   }
 }
 
-
 /* footer pushdown */
 
 main {
-  padding-bottom: 5rem;    
+  padding-bottom: 5rem;
 }
 
 #page-container {
