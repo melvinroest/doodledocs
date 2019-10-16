@@ -7,7 +7,16 @@
       {{#link-to "app.doc" this.model.randomURL class="button"}}
       <div>
         <img src="{{this.target.location.rootURL}}doodle docs logo.png" />
-        <div>Open New Doodle Doc</div>
+        <div>Open New Doodle Doc<span>(and share the link with friends)</span></div>
+      </div>
+      {{/link-to}}
+    </button>
+    <br />
+    <button>
+      {{#link-to "app.public" class="button"}}
+      <div>
+        <img src="{{this.target.location.rootURL}}doodle docs logo.png" />
+        <div>Doodle in public<span>(and meet someone new!)</span></div>
       </div>
       {{/link-to}}
     </button>

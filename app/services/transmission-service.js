@@ -6,16 +6,13 @@ const TRANSMISSIONMODE = Object.freeze({ P2P: "P2P", SERVER: "SERVER" });
 
 function initBugout() {
   let swarmId = `dd:${window.location.pathname.split("dd:")[1]}`; //type in your own swarmId for it to work
-  let b = new Bugout(swarmId);
-  if (Config.buildTarget === "gh-pages") {
-    swarmId = "gh-pages";
-  }
-  b.on("seen", address => {
-    let p = document.createElement("p");
-    p.innerHTML = `Bugout address ${address} connected`;
-    document.getElementById("content").append(p);
-  });
-  return b;
+  // debug feature to see who is connecting
+  // b.on("seen", address => {
+  //   let p = document.createElement("p");
+  //   p.innerHTML = `Bugout address ${address} connected`;
+  //   document.getElementById("content").append(p);
+  // });
+  return new Bugout(swarmId);
 }
 
 function constructDataMessage(channel, method, data, urlPath) {

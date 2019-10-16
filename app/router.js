@@ -13,6 +13,7 @@ Router.map(function() {
   });
   this.route("app", function() {
     this.route("doc", { path: "/:random_url" });
+    this.route("public");
   });
 });
 

@@ -44,9 +44,6 @@ export default Route.extend({
       result.push(data.splice(randomIndex, 1)[0]);
     }
     let swarmId = `dd:${randomString(8, "aA#!")}`;
-    if (Config.buildTarget === "gh-pages") {
-      swarmId = "gh-pages";
-    }
     return {
       examples: result,
       randomURL: swarmId
