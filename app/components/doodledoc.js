@@ -13,7 +13,7 @@ export default Component.extend({
   }),
   attributeBindings: ["style"],
   style:
-    "position: absolute; z-index: 99; height: 100vh; width: 100%; opacity: 0.5; pointer-events: all;",
+    "position: absolute; z-index: 99; height: 100vh; width: 100%; opacity: 0.5; pointer-events: none;",
   didRender() {
     this._super(...arguments);
     disablePageScroll();
@@ -29,6 +29,14 @@ export default Component.extend({
         transmissionService.TRANSMISSIONMODE.P2P
       );
       drawEngine.call(this, hud, canvas, transmissionService);
+
+      const target = this._target;
+      const ele = this.get("element");
+      if (target.m === "browse") {
+        ele.style.pointerEvents = "none";
+      } else {
+        ele.style.pointerEvents = "auto";
+      }
     }
   },
   willDestroyElement() {

@@ -2,15 +2,15 @@ import Controller from "@ember/controller";
 
 export default Controller.extend({
   w: "",
+  m: "draw",
   queryParams: [
     {
       w: {
         type: "string"
+      },
+      m: {
+        type: "string"
       }
     }
-  ],
-  getWebsite() {
-    //todo: validate URL
-    console.log("getWebsite", this.get("w"));
-  }
+  ]
 });
