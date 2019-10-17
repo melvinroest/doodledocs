@@ -218,7 +218,7 @@ export function bresenhamsLineAlgorithm(args) {
   // need adj for tool overlay
   const adj = pencilThickness / 2;
 
-  let hasNoPalm = detectPalm(x, x1, x2); //rudimentary and simple
+  let hasNoPalm = detectPalm(x, x1, x2, y, y1, y2); //rudimentary and simple
 
   for (let x = x1; x < x2; x++) {
     if (hasNoPalm) {
@@ -257,10 +257,12 @@ function drawRect(context, x, y, pencilThickness, mode) {
 }
 
 // rudimentary palm cancellation -- I simply logged values and handcoded a threshold that I think is too big
-function detectPalm(x, x1, x2) {
-  // console.log("detectPalm", x, x1, x2);
-  const threshold = 350; //you can tweak this
-  if (Math.abs(x1 - x2) > threshold) {
+function detectPalm(x, x1, x2, y, y1, y2) {
+  // console.log("detectPalm");
+  // console.log("x, x1, x2, y, y1, y2");
+  // console.log(x, x1, x2, y, y1, y2);
+  const threshold = 400; //you can tweak this -- you can also remove the Math.abs(y1 - y2) since it's mostly about the x var
+  if (Math.abs(x1 - x2) + Math.abs(y1 - y2) > threshold) {
     return false;
   }
   return true;
