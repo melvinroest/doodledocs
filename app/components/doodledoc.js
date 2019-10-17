@@ -13,7 +13,7 @@ export default Component.extend({
   }),
   attributeBindings: ["style"],
   style:
-    "position: absolute; z-index: 99; height: 100vh; width: 100%; opacity: 0.5; pointer-events: none;",
+    "position: absolute; z-index: 99; height: 100vh; width: 100%; pointer-events: none;",
   didRender() {
     this._super(...arguments);
     disablePageScroll();

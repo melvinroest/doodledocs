@@ -17,6 +17,7 @@ export default class Pencil {
     this.canvas = canvas;
     this.hudContext = hudContext;
     this.transmissionSerice = transmissionSerice;
+    this.mode = "pencil";
   }
 
   //this.start
@@ -41,7 +42,8 @@ export default class Pencil {
           context: this.context,
           pencilThickness: this.pencilThickness,
           isMakingOwnChanges: true,
-          transmissionService: this.transmissionSerice
+          transmissionService: this.transmissionSerice,
+          mode: this.mode === "pencil" ? "fill" : "clear"
         };
         let last = bresenhamsLineAlgorithm.call(this, args);
         this.lastX = last.lastX;

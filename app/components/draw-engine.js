@@ -8,8 +8,8 @@ export default function init(hud, canvas, transmissionService) {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "#FFFBEB"; //for debug use: $55f
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  // context.fillStyle = "#FFFBEB"; //for debug use: $55f
+  // context.fillRect(0, 0, canvas.width, canvas.height);
 
   //init hud
   let hudContext = hud.getContext("2d");
@@ -35,12 +35,14 @@ export default function init(hud, canvas, transmissionService) {
     document.getElementById("pencil").addEventListener(eventName, e => {
       pencil.pencilThickness = 1;
       pencil.pencilColor = "rgba(0, 0, 0, 0.33)";
+      pencil.mode = "pencil";
     });
   });
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("eraser").addEventListener(eventName, e => {
       pencil.pencilThickness = 20;
       pencil.pencilColor = "#FFFBEB";
+      pencil.mode = "eraser";
     });
   });
 
@@ -146,7 +148,8 @@ export function bresenhamsLineAlgorithm(args) {
     context,
     pencilThickness,
     isMakingOwnChanges,
-    transmissionService
+    transmissionService,
+    mode
   } = args;
 
   let mouseX = e._x;
@@ -221,10 +224,10 @@ export function bresenhamsLineAlgorithm(args) {
   for (let x = x1; x < x2; x++) {
     if (isSteep) {
       //does up/down
-      context.fillRect(y - adj, x - adj, pencilThickness, pencilThickness);
+      drawRect(context, y - adj, x - adj, pencilThickness, mode);
     } else {
       //does left/right
-      context.fillRect(x - adj, y - adj, pencilThickness, pencilThickness);
+      drawRect(context, x - adj, y - adj, pencilThickness, mode);
     }
 
     error += de;
@@ -239,4 +242,15 @@ export function bresenhamsLineAlgorithm(args) {
   lastX = mouseX;
   lastY = mouseY;
   return { lastX, lastY };
+}
+
+function drawRect(context, x, y, pencilThickness, mode) {
+  if (mode === "fill") {
+    context.fillRect(x, y, pencilThickness, pencilThickness);
+  } else if (mode === "clear") {
+    context.clearRect(x, y, pencilThickness, pencilThickness);
+  } else {
+    //legacy (partnerMakesChanges makes use of this, todo: change this -- this only matters atm for iframe support)
+    context.fillRect(x, y, pencilThickness, pencilThickness);
+  }
 }
