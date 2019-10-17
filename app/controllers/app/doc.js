@@ -10,6 +10,9 @@ export default Controller.extend({
       },
       m: {
         type: "string"
+      },
+      l: {
+        type: "boolean"
       }
     }
   ]

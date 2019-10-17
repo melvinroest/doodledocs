@@ -46,7 +46,7 @@ module.exports = function(environment) {
 
   if (environment === "production") {
     // here you can enable a production-specific feature
-    ENV.rootURL = "/prod/";
+    ENV.rootURL = "/";
     if (process.env.TARGET === "gh-pages") {
       ENV.rootURL = "/doodledocs/";
     }

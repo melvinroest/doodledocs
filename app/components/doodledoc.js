@@ -32,6 +32,8 @@ export default Component.extend({
 
       const target = this._target;
       const ele = this.get("element");
+
+      //todo: redo this feature or exapand it (toggle between drawing and browsing)
       if (target.m === "browse") {
         ele.style.pointerEvents = "none";
       } else {

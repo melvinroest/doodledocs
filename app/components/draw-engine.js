@@ -47,7 +47,15 @@ export default function init(hud, canvas, transmissionService) {
   });
 
   transmissionService.onReceivingMessage((data, address) => {
-    partnerMakesChanges(data, context, canvas, hudContext, transmissionService);
+    if (data.e) {
+      partnerMakesChanges(
+        data,
+        context,
+        canvas,
+        hudContext,
+        transmissionService
+      );
+    }
   });
 
   //init pressure settings
