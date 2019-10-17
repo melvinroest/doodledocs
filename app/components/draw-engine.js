@@ -48,6 +48,7 @@ export default function init(hud, canvas, transmissionService) {
 
   transmissionService.onReceivingMessage((data, address) => {
     if (data.e) {
+      console.log("onReceivingMessage debug", data.debug);
       partnerMakesChanges(
         data,
         context,
@@ -220,8 +221,10 @@ export function bresenhamsLineAlgorithm(args) {
       lastY,
       pencilColor,
       pencilThickness,
-      mode
+      mode,
+      debug: e //only put this on if you can't connect ipad through Safari
     };
+    console.log("event", e);
     // partnerMakesChanges
     transmissionService.send(data);
   }
@@ -230,13 +233,18 @@ export function bresenhamsLineAlgorithm(args) {
   pencilThickness = pencilThickness + 8 * e.userForce;
   // need adj for tool overlay
   const adj = pencilThickness / 2;
+
+  let hasNoPalm = detectPalm(x, x1, x2); //rudimentary and simple
+
   for (let x = x1; x < x2; x++) {
-    if (isSteep) {
-      //does up/down
-      drawRect(context, y - adj, x - adj, pencilThickness, mode);
-    } else {
-      //does left/right
-      drawRect(context, x - adj, y - adj, pencilThickness, mode);
+    if (hasNoPalm) {
+      if (isSteep) {
+        //does up/down
+        drawRect(context, y - adj, x - adj, pencilThickness, mode);
+      } else {
+        //does left/right
+        drawRect(context, x - adj, y - adj, pencilThickness, mode);
+      }
     }
 
     error += de;
@@ -262,4 +270,14 @@ function drawRect(context, x, y, pencilThickness, mode) {
     //legacy (partnerMakesChanges makes use of this, todo: change this -- this only matters atm for iframe support)
     context.fillRect(x, y, pencilThickness, pencilThickness);
   }
+}
+
+// rudimentary palm cancellation -- I simply logged values and handcoded a threshold that I think is too big
+function detectPalm(x, x1, x2) {
+  // console.log("detectPalm", x, x1, x2);
+  const threshold = 400; //you can tweak this
+  if (Math.abs(x1 - x2) > threshold) {
+    return false;
+  }
+  return true;
 }
