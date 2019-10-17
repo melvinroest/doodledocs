@@ -48,14 +48,7 @@ export default function init(hud, canvas, transmissionService) {
 
   transmissionService.onReceivingMessage((data, address) => {
     if (data.e) {
-      console.log("onReceivingMessage debug", data.debug);
-      partnerMakesChanges(
-        data,
-        context,
-        canvas,
-        hudContext,
-        transmissionService
-      );
+      partnerMakesChanges(data, context, canvas, hudContext);
     }
   });
 
@@ -125,21 +118,13 @@ export function drawHud(hudContext, canvas, lineThickness, x, y) {
   hudContext.stroke();
 }
 
-function partnerMakesChanges(
-  data,
-  context,
-  canvas,
-  hudContext,
-  transmissionService
-) {
+function partnerMakesChanges(data, context, canvas, hudContext) {
   //hudcontext needs to be used for a hud display for the partner
   data.context = context;
   data.isMakingOwnChanges = false;
   data.b = undefined;
   // data.context.fillStyle = "red"; //debug
-  data.context.fillStyle = data.pencilColor;
-  data.transmissionService = transmissionService;
-  bresenhamsLineAlgorithm.call(this, data);
+  bresenhamsLineAlgorithm(data);
   drawHud(hudContext, canvas, data.pencilThickness, data.e._x, data.e._y);
 }
 
@@ -160,6 +145,7 @@ export function bresenhamsLineAlgorithm(args) {
     transmissionService,
     mode
   } = args;
+  context.fillStyle = pencilColor;
 
   let mouseX = e._x;
   let mouseY = e._y;
@@ -221,10 +207,8 @@ export function bresenhamsLineAlgorithm(args) {
       lastY,
       pencilColor,
       pencilThickness,
-      mode,
-      debug: e //only put this on if you can't connect ipad through Safari
+      mode
     };
-    console.log("event", e);
     // partnerMakesChanges
     transmissionService.send(data);
   }
@@ -275,7 +259,7 @@ function drawRect(context, x, y, pencilThickness, mode) {
 // rudimentary palm cancellation -- I simply logged values and handcoded a threshold that I think is too big
 function detectPalm(x, x1, x2) {
   // console.log("detectPalm", x, x1, x2);
-  const threshold = 400; //you can tweak this
+  const threshold = 350; //you can tweak this
   if (Math.abs(x1 - x2) > threshold) {
     return false;
   }

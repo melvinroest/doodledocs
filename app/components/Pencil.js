@@ -24,7 +24,7 @@ export default class Pencil {
   //this.startDeepPress
   startDraw(e) {
     this.started = true;
-    this.context.fillStyle = this.pencilColor;
+    // this.context.fillStyle = this.pencilColor; //I don't think this is needed
     this.lastX = e._x - e.target.offsetLeft;
     this.lastY = e._y - e.target.offsetTop;
   }
