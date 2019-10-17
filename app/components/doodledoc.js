@@ -12,7 +12,8 @@ export default Component.extend({
     return owner.lookup(`service:transmission-service`);
   }),
   attributeBindings: ["style"],
-  style: "position: relative; height: 100vh",
+  style:
+    "position: absolute; z-index: 99; height: 100vh; width: 100%; opacity: 0.5; pointer-events: all;",
   didRender() {
     this._super(...arguments);
     disablePageScroll();
