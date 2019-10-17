@@ -219,7 +219,8 @@ export function bresenhamsLineAlgorithm(args) {
       lastX,
       lastY,
       pencilColor,
-      pencilThickness
+      pencilThickness,
+      mode
     };
     // partnerMakesChanges
     transmissionService.send(data);

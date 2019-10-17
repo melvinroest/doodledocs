@@ -56,7 +56,8 @@ export default class Pencil {
   //this.end
   //this.endDeepPress
   endDraw(e) {
-    this.hudContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // good for standard collaborative drawing, not so handy for when I use my iframe hack
+    // this.hudContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (this.started) {
       this.started = false;
     }
