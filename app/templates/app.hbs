@@ -1,12 +1,11 @@
 <main>
   <header>
     <img src="{{this.target.location.rootURL}}doodle docs big logo.png" />
-    <span>Options: <a id="pencil" href="#using-pencil">pencil</a> | <a id="eraser" href="#using-eraser">Eraser</a>
+    <span>Options: <a id="pencil" href="#using-pencil">pencil</a> | <a id="eraser" href="#using-eraser">Eraser</a> | <a
+        id="download" href="#using-download">Download</a>
     </span>
     <nav>
       {{#link-to "site.home" class="button"}}Home{{/link-to}}
-      |
-      {{#link-to "site.faq" class="button"}}FAQ{{/link-to}}
     </nav>
   </header>
   {{outlet}}

@@ -45,6 +45,25 @@ export default function init(hud, canvas, transmissionService) {
       pencil.mode = "eraser";
     });
   });
+  ["click", "touchstart"].forEach(function(eventName) {
+    document.getElementById("download").addEventListener(eventName, e => {
+      //create a new canvas
+      const newCanvas = document.createElement("canvas");
+      const newContext = newCanvas.getContext("2d");
+      newCanvas.width = canvas.width;
+      newCanvas.height = canvas.height;
+      newContext.drawImage(canvas, 0, 0);
+      newContext.fillStyle = "#000";
+      newContext.font = "32px Roboto Mono";
+      newContext.fillText("doodledocs.com", 10, 50);
+
+      //create the download
+      const link = document.createElement("a");
+      link.download = "drawing.png";
+      link.href = newCanvas.toDataURL();
+      link.click();
+    });
+  });
 
   transmissionService.onReceivingMessage((data, address) => {
     if (data.e) {
