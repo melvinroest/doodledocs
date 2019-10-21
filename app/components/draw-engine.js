@@ -64,6 +64,21 @@ export default function init(hud, canvas, transmissionService) {
       link.click();
     });
   });
+  ["click", "touchstart"].forEach(function(eventName) {
+    document.getElementById("share").addEventListener(eventName, e => {
+      const dummy = document.createElement("input");
+      const text = window.location.href;
+      document.body.appendChild(dummy);
+      dummy.value = text;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      //show tooltip or message - now I'm showing an alert... yea I know
+      alert(
+        "URL copied, you can share it with your friends and they'll be able to draw as well"
+      );
+    });
+  });
 
   transmissionService.onReceivingMessage((data, address) => {
     if (data.e) {

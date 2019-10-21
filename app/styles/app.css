@@ -95,9 +95,9 @@ header img {
 
 @media (min-width: 800px) {
   header span {
-    position: absolute;
+    position: relative; /* was absolute */
     margin-left: 280px;
-    bottom: 10px;
+    top: 10px; /* was bottom */
   }
 }
 
