@@ -18,6 +18,8 @@ module.exports = function(defaults) {
     using: [{ transformation: "amd", as: "pressure" }]
   });
 
+  app.import("vendor/google-analytics.js");
+
   // Use `app.import` to add additional libraries to the generated
   // output files.
   //

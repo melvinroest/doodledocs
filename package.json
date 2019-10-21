@@ -24,6 +24,7 @@
     "ember-ajax": "^5.0.0",
     "ember-auto-import": "^1.5.2",
     "ember-cli": "~3.12.0",
+    "ember-cli-analytics": "^1.4.1",
     "ember-cli-app-version": "^3.2.0",
     "ember-cli-babel": "^7.7.3",
     "ember-cli-dependency-checker": "^3.1.0",

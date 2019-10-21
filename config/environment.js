@@ -21,6 +21,32 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+    analytics: {
+      options: {
+        limitRouteInformation: false //I might want to set this to true, need to test
+      },
+      integrations: [
+        // {
+        //   name: "GoogleAdwords",
+        //   config: {
+        //     id: "XXXXXXXXXX",
+        //     label: "XXXXXXXXXXXXXXXXXXX"
+        //   }
+        // },
+        {
+          name: "GoogleAnalytics",
+          config: {
+            id: "UA-150531741-1",
+            remarketing: true,
+            ecommerce: true,
+            enhancedEcommerce: false,
+            set: {
+              anonymizeIp: false //currently false for testing purposes, todo reset this to true
+            }
+          }
+        }
+      ]
     }
   };
 
@@ -46,9 +72,12 @@ module.exports = function(environment) {
 
   if (environment === "production") {
     // here you can enable a production-specific feature
-    ENV.rootURL = "/";
+    ENV.rootURL = "/this/should/break/for/now/put/env/var/in/prod";
     if (process.env.TARGET === "gh-pages") {
       ENV.rootURL = "/doodledocs/";
+    }
+    if (process.env.TARGET === "local-test-gh-pages") {
+      ENV.rootURL = "/";
     }
   }
 
