@@ -1,11 +1,12 @@
 import Pressure from "pressure";
 import Pencil from "./Pencil";
 import ColorPicker from "./ColorPicker";
+import { disablePageScroll, enablePageScroll } from "scroll-lock";
 
 export default function init(hud, canvas, transmissionService) {
   let context = canvas.getContext("2d");
   canvas.style.width = "100%";
-  canvas.style.height = "100%";
+  canvas.style.height = "300vh";
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -15,7 +16,7 @@ export default function init(hud, canvas, transmissionService) {
   //init hud
   let hudContext = hud.getContext("2d");
   hud.style.width = "100%";
-  hud.style.height = "100%";
+  hud.style.height = "300vh";
   hud.width = canvas.offsetWidth;
   hud.height = canvas.offsetHeight;
   hudContext.clearRect(0, 0, canvas.width, canvas.height);
@@ -30,6 +31,8 @@ export default function init(hud, canvas, transmissionService) {
     hudContext,
     transmissionService
   );
+
+  let scrollItemIsToggled = false;
 
   const newElement = document.getElementById("pencil-picker");
   const picker = new ColorPicker(newElement, "rgba(0, 0, 0, 1)"); //I don't want to scare users with the alpha channel in the beginning
@@ -86,6 +89,22 @@ export default function init(hud, canvas, transmissionService) {
         "URL copied, you can share it with your friends and they'll be able to draw as well"
       );
     });
+  });
+
+  ["click", "touchstart"].forEach(function(eventName) {
+    document
+      .getElementById("scroll-menu-item-on")
+      .addEventListener(eventName, e => {
+        enablePageScroll();
+      });
+  });
+
+  ["click", "touchstart"].forEach(function(eventName) {
+    document
+      .getElementById("scroll-menu-item-off")
+      .addEventListener(eventName, e => {
+        disablePageScroll();
+      });
   });
 
   transmissionService.onReceivingMessage((data, address) => {

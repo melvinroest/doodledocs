@@ -78,7 +78,8 @@ footer {
 }
 
 header {
-  position: relative;
+  position: fixed; /* could be relative */
+  z-index: 100;
   min-height: 100px;
 }
 
@@ -220,6 +221,18 @@ footer {
   position: absolute;
   bottom: 0;
   height: 5rem;
+}
+
+/* other features */
+
+#iframed-page {
+  position: absolute;
+  height: 300vh;
+  z-index: 90;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #fffbeb;
+  border: 0;
 }
 
 .pickr {
