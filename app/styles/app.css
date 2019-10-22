@@ -221,3 +221,18 @@ footer {
   bottom: 0;
   height: 5rem;
 }
+
+.pickr {
+  display: inline-block;
+  top: -2px;
+  margin: 0;
+  margin-left: 5px;
+  margin-bottom: 1px;
+  padding: 0;
+  width: 10px;
+  height: 10px;
+}
+
+.pcr-button {
+  margin: 0;
+}

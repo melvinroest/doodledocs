@@ -1,5 +1,6 @@
 import Pressure from "pressure";
 import Pencil from "./Pencil";
+import ColorPicker from "./ColorPicker";
 
 export default function init(hud, canvas, transmissionService) {
   let context = canvas.getContext("2d");
@@ -30,18 +31,25 @@ export default function init(hud, canvas, transmissionService) {
     transmissionService
   );
 
+  const newElement = document.getElementById("pencil-picker");
+  const picker = new ColorPicker(newElement, "rgba(0, 0, 0, 1)"); //I don't want to scare users with the alpha channel in the beginning
+  picker.on("change", (color, instance) => {
+    const colorRGBA = color.toRGBA().toString();
+    pencil.pencilColor = colorRGBA;
+  });
+
   //init buttons
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("pencil").addEventListener(eventName, e => {
       pencil.pencilThickness = 1;
-      pencil.pencilColor = "rgba(0, 0, 0, 0.33)";
+      // pencil.pencilColor = "rgba(0, 0, 0, 0.33)"; //maybe re-init color here, to think about
       pencil.mode = "pencil";
     });
   });
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("eraser").addEventListener(eventName, e => {
       pencil.pencilThickness = 20;
-      pencil.pencilColor = "#FFFBEB";
+      pencil.pencilColor = "#FFFBEB"; //not needed anymore, but a good debug property
       pencil.mode = "eraser";
     });
   });
@@ -73,8 +81,8 @@ export default function init(hud, canvas, transmissionService) {
       dummy.select();
       document.execCommand("copy");
       document.body.removeChild(dummy);
-      //show tooltip or message - now I'm showing an alert... yea I know
-      alert(
+      //show tooltip or message - now I'm doing a console.log... yea I know
+      console.log(
         "URL copied, you can share it with your friends and they'll be able to draw as well"
       );
     });

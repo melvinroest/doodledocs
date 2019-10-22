@@ -54,6 +54,7 @@
     "node": "8.* || >= 10.*"
   },
   "dependencies": {
+    "@simonwep/pickr": "^1.4.5",
     "bugout": "file:vendor/edited/bugout",
     "requirejs": "^2.3.6",
     "socket.io-client": "^2.3.0",
