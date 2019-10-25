@@ -52,12 +52,12 @@ export default Component.extend({
           e.preventDefault();
           const url = document.getElementById("w-input-menu-item").value;
           this._target.set("w", url);
-          console.log("url", url, this);
         });
     }
   },
   willDestroyElement() {
     enablePageScroll();
+    //need to reset query parameters here
     this._super(...arguments);
   }
 });

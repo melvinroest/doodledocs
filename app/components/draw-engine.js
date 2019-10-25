@@ -52,7 +52,6 @@ export default function init(hud, canvas, transmissionService) {
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("eraser").addEventListener(eventName, e => {
       pencil.pencilThickness = 20;
-      pencil.pencilColor = "#FFFBEB"; //not needed anymore, but a good debug property
       pencil.mode = "eraser";
     });
   });

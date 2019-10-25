@@ -17,7 +17,6 @@ export default Component.extend({
     }
   },
   load(url, options) {
-    console.log(url);
     if (!url || !url.startsWith("http")) {
       throw new Error(
         `X-Frame-Bypass src ${url} does not start with http(s)://`
@@ -61,12 +60,53 @@ export default Component.extend({
       this.srcdoc = html;
     }
     this.fetchProxy(url, options, 0)
-      .then(res => res.text())
+      .then(async res => {
+        const resBlob = await res.clone().blob();
+        const resText = await res.clone().text();
+        const type = resBlob.type.split("/")[0];
+        const subType = resBlob.type.split("/")[1];
+        let result = undefined;
+        switch (type) {
+          case "image":
+            result = {
+              content: resBlob,
+              type,
+              subType
+            };
+            break;
+          case "video":
+            result = {
+              content: resBlob,
+              type,
+              subType
+            };
+            break;
+          case "text":
+            result = {
+              content: resText,
+              type,
+              subType
+            };
+            if (subType === "json") {
+              result = {
+                content: res.clone().json(),
+                type,
+                subType
+              };
+            }
+            break;
+          default:
+            break;
+        }
+        return result;
+      })
       .then(data => {
-        console.log("fetch proxy initiated");
+        console.log("fetch proxy initiated", data);
         if (data) {
-          const regex = /<head([^>]*)>/i;
-          const html = `
+          let element = this.element ? this.element : this;
+          if (data.subType === "html") {
+            const regex = /<head([^>]*)>/i;
+            const html = `
           <head$1>
             <base href="${url}">
             <script>
@@ -88,11 +128,15 @@ export default Component.extend({
               })
             </script>
             `;
-          const replacedData = data.replace(regex, html);
-          if (this.element) {
-            this.element.srcdoc = replacedData;
-          } else {
-            this.srcdoc = replacedData;
+            data.content = data.content.replace(regex, html);
+            element.srcdoc = data.content;
+          }
+          if (data.type === "image") {
+            // const myImage = document.createElement("img");
+            // myImage.src = url;
+            // data.content = myImage;
+            // element.appendChild(myImage);
+            element.srcdoc = `<img src="${url}">`;
           }
         }
       })

@@ -1,6 +1,31 @@
 // import Pickr from "@simonwep/pickr/dist/pickr.es5.min";
 import Pickr from "@simonwep/pickr";
 
+// function needed in order to patch the library
+const on = eventListener.bind(null, "addEventListener");
+
+// function needed in order to patch the library
+function eventListener(method, elements, events, fn, options = {}) {
+  // Normalize array
+  if (elements instanceof HTMLCollection || elements instanceof NodeList) {
+    elements = Array.from(elements);
+  } else if (!Array.isArray(elements)) {
+    elements = [elements];
+  }
+
+  if (!Array.isArray(events)) {
+    events = [events];
+  }
+
+  for (const el of elements) {
+    for (const ev of events) {
+      el[method](ev, fn, { capture: false, ...options });
+    }
+  }
+
+  return Array.prototype.slice.call(arguments, 1);
+}
+
 export default class ColorPicker {
   constructor(newElement, color) {
     this.newElement = newElement;
@@ -18,7 +43,7 @@ export default class ColorPicker {
       // If true, appendToBody will also be automatically true.
       useAsButton: false,
       // Size of gap between pickr (widget) and the corresponding reference (button) in px
-      padding: 0,
+      padding: 4,
       // If true pickr won't be floating, and instead will append after the in el resolved element.
       // It's possible to hide it via .hide() anyway.
       inline: false,
@@ -123,6 +148,44 @@ export default class ColorPicker {
     //     console.log("swatchselect", color, instance);
     //   });
 
+    console.log("pickr", pickr);
+    pickr._eventBindings.push(
+      on(pickr._root.button, "pointerdown", () => {
+        this.isOpen() ? this.hide() : this.show();
+      })
+    );
+
+    this.pickr = pickr;
     return pickr;
+  }
+
+  //copying some of the functions in order to use it here
+  /**
+   * Hides the color-picker ui.
+   */
+  hide() {
+    console.log("hide", this);
+    this.pickr._root.app.classList.remove("visible");
+    this.pickr._emit("hide", this);
+    return this;
+  }
+
+  /**
+   * Shows the color-picker ui.
+   */
+  show() {
+    console.log("show", this);
+    this.pickr._root.app.classList.add("visible");
+    this.pickr._rePositioningPicker();
+    this.pickr._emit("show", this);
+    return this;
+  }
+
+  /**
+   * @return {boolean} If the color picker is currently open
+   */
+  isOpen() {
+    console.log(this);
+    return this.pickr._root.app.classList.contains("visible");
   }
 }
