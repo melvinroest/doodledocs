@@ -100,9 +100,9 @@ export default Component.extend({
   },
   fetchProxy(url, options, i) {
     const proxy = [
-      "https://cors.io/?",
+      "https://cors-anywhere.herokuapp.com/",
       "https://jsonp.afeld.me/?url=",
-      "https://cors-anywhere.herokuapp.com/"
+      "https://cors.io/?"
     ];
     return fetch(proxy[i] + url, options)
       .then(res => {

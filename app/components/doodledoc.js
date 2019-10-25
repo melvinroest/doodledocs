@@ -39,6 +39,13 @@ export default Component.extend({
       } else {
         ele.style.pointerEvents = "auto";
       }
+      window.onhashchange = function() {
+        if (location.hash === "#browse") {
+          ele.style.pointerEvents = "none";
+        } else {
+          ele.style.pointerEvents = "auto";
+        }
+      };
     }
   },
   willDestroyElement() {
