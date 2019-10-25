@@ -46,6 +46,14 @@ export default Component.extend({
           ele.style.pointerEvents = "auto";
         }
       };
+      document
+        .getElementById("w-submit-menu-item")
+        .addEventListener("click", e => {
+          e.preventDefault();
+          const url = document.getElementById("w-input-menu-item").value;
+          this._target.set("w", url);
+          console.log("url", url, this);
+        });
     }
   },
   willDestroyElement() {

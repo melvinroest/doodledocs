@@ -85,7 +85,7 @@ header {
 header#app-header {
   position: fixed; /* could be relative */
   z-index: 100;
-  min-height: 100px;
+  min-height: 132px;
 }
 
 header img {
@@ -238,7 +238,7 @@ footer {
   pointer-events: auto;
   background-color: #fffbeb;
   border: 0;
-  margin-top: 100px; /* because of fixed menu */
+  margin-top: 132px; /* because of fixed header#app-header */
 }
 
 .pickr {
@@ -254,4 +254,24 @@ footer {
 
 .pcr-button {
   margin: 0;
+}
+
+input {
+  overflow: visible;
+  margin: 0;
+}
+
+.form-control {
+  position: relative;
+  top: -4px;
+  width: 25%;
+  min-width: 300px;
+  padding: 0.2em 0.4em;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
