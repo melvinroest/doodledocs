@@ -18,7 +18,7 @@ module.exports = function(defaults) {
     using: [{ transformation: "amd", as: "pressure" }]
   });
 
-  app.import("vendor/google-analytics.js");
+  // app.import("vendor/google-analytics.js"); //to do: I think I can remove this
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

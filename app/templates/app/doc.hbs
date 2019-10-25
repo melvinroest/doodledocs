@@ -2,5 +2,8 @@
 
 <div>
   <Doodledoc />
-  <iframe id="iframed-page" src={{website-validation w}}></iframe>
+  {{!-- <iframe id="iframed-page" src={{website-validation w}}></iframe> --}}
+  {{!-- <x-frame-bypass is="x-frame-bypass" src="https://news.ycombinator.com/"></x-frame-bypass> --}}
+  <XFrame @id="iframed-page" @src={{website-validation w}} @srcdoc=""></XFrame>
+
 </div>
