@@ -7,13 +7,15 @@
         href="#scroll-off">off</a></span>
     <br />
     <span>Website: <input id="w-input-menu-item" type="text" class="form-control" /> <a id="w-submit-menu-item"
-        href="#annotate-website">Go</a><input id="website-slider-menu-item" type="range" name="website-opacity" min="0"
-        max="1" step="0.01" /></span>
+        href="#annotate-website">Go</a></span>
     <br />
-    <span>Palette: <a id="pencil" href="#using-pencil">pencil</a><span
+    <span>Website transparency: <input id="website-slider-menu-item" type="range" name="website-opacity" min="0" max="1"
+        step="0.01" /></span>
+    <br />
+    <span>Palette: <a id="pencil" href="#using-pencil">Pencil</a><span
         style="margin: 0; margin-left: 10px; padding: 1px 7px 2px; top: 0;" id="pencil-picker"></span> |
       <a id="eraser" href="#using-eraser">Eraser</a> | <a id="browse-menu-item" href="#browse">No Draw</a></span>
-    <nav>
+    <nav id="app-nav">
       {{#link-to "site.home" class="button"}}Home{{/link-to}}
     </nav>
   </header>
