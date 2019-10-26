@@ -269,7 +269,9 @@ export function bresenhamsLineAlgorithm(args) {
     yStep = 1;
   }
 
-  if (isMakingOwnChanges) {
+  let palmIsDetected = detectPalm(x, x1, x2, y, y1, y2); //rudimentary and simple
+
+  if (isMakingOwnChanges && palmIsDetected === false) {
     let data = {
       e: {
         _x: e._x,
@@ -290,8 +292,6 @@ export function bresenhamsLineAlgorithm(args) {
   pencilThickness = pencilThickness + 8 * e.userForce;
   // need adj for tool overlay
   const adj = pencilThickness / 2;
-
-  let palmIsDetected = detectPalm(x, x1, x2, y, y1, y2); //rudimentary and simple
 
   for (let x = x1; x < x2; x++) {
     if (palmIsDetected === false) {
