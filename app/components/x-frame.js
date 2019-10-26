@@ -3,8 +3,8 @@ import Component from "@ember/component";
 export default Component.extend({
   tagName: "iframe",
   didRender() {
-    this.src = typeof this.src === "string" ? this.src : this.src[0];
     if (this.src) {
+      this.src = typeof this.src === "string" ? this.src : this.src[0];
       this.load(this.src); //load in src URL of iframe
       // on subsequent page requests, the iframe will be "this", so I am hooking up all the functions it needs to know
       this.element.load = this.load;
@@ -17,6 +17,13 @@ export default Component.extend({
     }
   },
   load(url, options) {
+    const element = this.element ? this.element : this;
+    console.log("url", url);
+    if (url === "") {
+      //empty url is fine
+      element.srcdoc = "";
+      return;
+    }
     if (!url || !url.startsWith("http")) {
       throw new Error(
         `X-Frame-Bypass src ${url} does not start with http(s)://`
@@ -54,11 +61,7 @@ export default Component.extend({
         </body>
       </html>
       `;
-    if (this.element) {
-      this.element.srcdoc = html;
-    } else {
-      this.srcdoc = html;
-    }
+    element.srcdoc = html;
     this.fetchProxy(url, options, 0)
       .then(async res => {
         const resBlob = await res.clone().blob();
@@ -103,7 +106,7 @@ export default Component.extend({
       .then(data => {
         console.log("fetch proxy initiated", data);
         if (data) {
-          let element = this.element ? this.element : this;
+          const element = this.element ? this.element : this;
           if (data.subType === "html") {
             const regex = /<head([^>]*)>/i;
             const html = `

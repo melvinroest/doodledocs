@@ -5,6 +5,10 @@ export function websiteValidation(params) {
     console.log(new Error("length of your arguments should be 1"));
     return;
   }
+  if (params[0] === "") {
+    //empty string is fine
+    return params;
+  }
   const a = document.createElement("a");
   a.href = params;
   if (a.host && a.host != window.location.host) {
