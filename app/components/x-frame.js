@@ -1,5 +1,10 @@
 import Component from "@ember/component";
 
+const handleSlider = e => {
+  const frame = document.getElementById("iframed-page"); //I forgot how to pass it, so I do it like this
+  frame.style.opacity = e.target.value;
+};
+
 export default Component.extend({
   tagName: "iframe",
   didRender() {
@@ -141,6 +146,11 @@ export default Component.extend({
             // element.appendChild(myImage);
             element.srcdoc = `<img src="${url}">`;
           }
+
+          const slider = document.getElementById("website-slider-menu-item");
+          slider.removeEventListener("input", handleSlider, true);
+          slider.removeEventListener("input", handleSlider, false);
+          slider.addEventListener("input", handleSlider);
         }
       })
       .catch(e => console.error("Cannot load X-Frame-Bypass:", e));

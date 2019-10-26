@@ -32,7 +32,7 @@ export default function init(hud, canvas, transmissionService) {
     transmissionService
   );
 
-  let scrollItemIsToggled = false;
+  //todo: maybe seperate menu items out from the draw-engine
 
   const newElement = document.getElementById("pencil-picker");
   const picker = new ColorPicker(newElement, "rgba(0, 0, 0, 1)"); //I don't want to scare users with the alpha channel in the beginning
