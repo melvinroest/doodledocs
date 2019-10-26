@@ -2,6 +2,7 @@ import Pressure from "pressure";
 import Pencil from "./Pencil";
 import ColorPicker from "./ColorPicker";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
+import { handleImage } from "doodledocs-app/utils/upload";
 
 export default function init(hud, canvas, transmissionService) {
   let context = canvas.getContext("2d");
@@ -33,7 +34,7 @@ export default function init(hud, canvas, transmissionService) {
   );
 
   //todo: maybe seperate menu items out from the draw-engine
-
+  //color picker
   const newElement = document.getElementById("pencil-picker");
   const picker = new ColorPicker(newElement, "rgba(0, 0, 0, 1)"); //I don't want to scare users with the alpha channel in the beginning
   picker.on("change", (color, instance) => {
@@ -41,17 +42,29 @@ export default function init(hud, canvas, transmissionService) {
     pencil.pencilColor = colorRGBA;
   });
 
+  //upload functionality
+  ["click", "touchstart"].forEach(function(eventName) {
+    document
+      .getElementById("upload-menu-item")
+      .addEventListener(eventName, e => {
+        e.preventDefault();
+        const input = document.createElement("input");
+        input.type = "file";
+        input.addEventListener("change", handleImage(context), false);
+        input.click();
+      });
+  });
+
   //init buttons
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("pencil").addEventListener(eventName, e => {
-      pencil.pencilThickness = 1;
-      // pencil.pencilColor = "rgba(0, 0, 0, 0.33)"; //maybe re-init color here, to think about
+      pencil.pencilThickness = 1; //todo: turn this into a widget
       pencil.mode = "pencil";
     });
   });
   ["click", "touchstart"].forEach(function(eventName) {
     document.getElementById("eraser").addEventListener(eventName, e => {
-      pencil.pencilThickness = 20;
+      pencil.pencilThickness = 20; //todo: turn this into a widget
       pencil.mode = "eraser";
     });
   });
