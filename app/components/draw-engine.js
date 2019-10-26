@@ -318,12 +318,15 @@ function drawRect(context, x, y, pencilThickness, mode) {
 
 // rudimentary palm cancellation -- I simply logged values and handcoded a threshold that I think is too big
 function detectPalm(x, x1, x2, y, y1, y2) {
-  // console.log("detectPalm");
-  // console.log("x, x1, x2, y, y1, y2");
-  // console.log(x, x1, x2, y, y1, y2);
-  const threshold = 400; //you can tweak this -- you can also remove the Math.abs(y1 - y2) since it's mostly about the x var
-  if (Math.abs(x1 - x2) + Math.abs(y1 - y2) > threshold) {
-    return false;
+  let hasNoPalm = true;
+
+  //lowest bug values observed: 0.47265625 – 0.0783132530120482
+  const thresholdPercent = 40; //you can tweak this
+  const diffX = Math.abs(x1 - x2) / window.innerWidth;
+  const diffY = Math.abs(y1 - y2) / window.innerHeight;
+
+  if (diffX + diffY > thresholdPercent) {
+    hasNoPalm = false;
   }
-  return true;
+  return hasNoPalm;
 }
