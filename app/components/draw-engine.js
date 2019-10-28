@@ -147,7 +147,7 @@ export default function init(hud, canvas, transmissionService) {
   overlay.style.top = "0px";
   overlay2.style.left = "0px";
   overlay2.style.top = "0px";
-  document.addEventListener("touchmove", event => {
+  document.addEventListener("scroll", event => {
     const viewportOffset = overlay.getBoundingClientRect();
     const viewportOffset2 = overlay2.getBoundingClientRect();
     // these are relative to the viewport
