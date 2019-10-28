@@ -2,7 +2,7 @@ import Pressure from "pressure";
 import Pencil from "./Pencil";
 import ColorPicker from "./ColorPicker";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
-import { handleImage } from "doodledocs-app/utils/upload";
+import { putImageOnCanvas, copyToClipboard } from "doodledocs-app/utils";
 
 export default function init(hud, canvas, transmissionService) {
   let context = canvas.getContext("2d");
@@ -33,6 +33,8 @@ export default function init(hud, canvas, transmissionService) {
     transmissionService
   );
 
+  let canvasModeIsDraw = true;
+
   //todo: maybe seperate menu items out from the draw-engine
   //color picker
   const newElement = document.getElementById("pencil-picker");
@@ -42,35 +44,35 @@ export default function init(hud, canvas, transmissionService) {
     pencil.pencilColor = colorRGBA;
   });
 
-  //upload functionality
-  ["click", "touchstart"].forEach(function(eventName) {
+  //upload functionality -- todo: make cross-browser compatible
+  ["click"].forEach(function(eventName) {
     document
       .getElementById("upload-menu-item")
       .addEventListener(eventName, e => {
         e.preventDefault();
         const input = document.createElement("input");
         input.type = "file";
-        input.addEventListener("change", handleImage(context), false);
+        input.addEventListener("change", putImageOnCanvas(context), false);
         input.click();
       });
   });
 
   //init buttons
-  ["click", "touchstart"].forEach(function(eventName) {
+  ["click"].forEach(function(eventName) {
     document.getElementById("pencil").addEventListener(eventName, e => {
       pencil.pencilThickness = 1; //todo: turn this into a widget
       pencil.mode = "pencil";
     });
   });
-  ["click", "touchstart"].forEach(function(eventName) {
+  ["click"].forEach(function(eventName) {
     document.getElementById("eraser").addEventListener(eventName, e => {
       pencil.pencilThickness = 20; //todo: turn this into a widget
       pencil.mode = "eraser";
     });
   });
-  ["click", "touchstart"].forEach(function(eventName) {
+  ["click"].forEach(function(eventName) {
     document.getElementById("download").addEventListener(eventName, e => {
-      //create a new canvas
+      //create a new canvas and convert it to a blob
       const newCanvas = document.createElement("canvas");
       const newContext = newCanvas.getContext("2d");
       newCanvas.width = canvas.width;
@@ -81,41 +83,54 @@ export default function init(hud, canvas, transmissionService) {
       newContext.fillText("doodledocs.com", 10, 50);
 
       //create the download
-      const link = document.createElement("a");
-      link.download = "drawing.png";
-      link.href = newCanvas.toDataURL();
-      link.click();
-    });
-  });
-  ["click", "touchstart"].forEach(function(eventName) {
-    document.getElementById("share").addEventListener(eventName, e => {
-      const dummy = document.createElement("input");
-      const text = window.location.href;
-      document.body.appendChild(dummy);
-      dummy.value = text;
-      dummy.select();
-      document.execCommand("copy");
-      document.body.removeChild(dummy);
-      //show tooltip or message - now I'm doing a console.log... yea I know
-      console.log(
-        "URL copied, you can share it with your friends and they'll be able to draw as well"
+      const mimeType = "image/png";
+      const imageQuality = 1;
+      newCanvas.toBlob(
+        blob => {
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          // Chrome on iOS behaves a bit differently
+          if (navigator.userAgent.match("CriOS")) {
+            link.href = newCanvas.toDataURL();
+          }
+          link.target = "_blank";
+          link.download = "doodle.png";
+          link.click();
+        },
+        mimeType,
+        imageQuality
       );
     });
   });
+  ["click"].forEach(function(eventName) {
+    document.getElementById("share").addEventListener(eventName, e => {
+      copyToClipboard(window.location.href);
+    });
+  });
 
-  ["click", "touchstart"].forEach(function(eventName) {
+  ["click"].forEach(function(eventName) {
     document
       .getElementById("scroll-menu-item-on")
       .addEventListener(eventName, e => {
-        enablePageScroll();
+        //scrolling needs to be on, therefore canvasModeIsDraw = false
+        if (canvasModeIsDraw) {
+          canvas.style.pointerEvents = "none";
+          enablePageScroll();
+          canvasModeIsDraw = false;
+        }
       });
   });
 
-  ["click", "touchstart"].forEach(function(eventName) {
+  ["click"].forEach(function(eventName) {
     document
       .getElementById("scroll-menu-item-off")
       .addEventListener(eventName, e => {
-        disablePageScroll();
+        //scrolling needs to be off, therefore canvasModeIsDraw = true
+        if (!canvasModeIsDraw) {
+          canvas.style.pointerEvents = "auto";
+          disablePageScroll();
+          canvasModeIsDraw = true;
+        }
       });
   });
 
@@ -123,6 +138,43 @@ export default function init(hud, canvas, transmissionService) {
     if (data.e) {
       partnerMakesChanges(data, context, canvas, hudContext);
     }
+  });
+
+  //init zoom settings (stub)
+  const overlay = document.getElementById("app-header");
+  const overlay2 = document.getElementsByClassName("pcr-app")[0];
+  overlay.style.left = "0px";
+  overlay.style.top = "0px";
+  overlay2.style.left = "0px";
+  overlay2.style.top = "0px";
+  document.addEventListener("touchmove", event => {
+    const viewportOffset = overlay.getBoundingClientRect();
+    const viewportOffset2 = overlay2.getBoundingClientRect();
+    // these are relative to the viewport
+    // console.log(
+    //   "scroll",
+    //   overlay.style.left,
+    //   viewportOffset.left,
+    //   newX,
+    //   overlay.style.top,
+    //   viewportOffset.top,
+    //   overlay.style
+    // );
+    const zoom = document.documentElement.clientWidth / window.innerWidth;
+    overlay.style.transform = `scale(${1 / zoom})`;
+    overlay.style.position = "absolute";
+    overlay.style.left = `${parseFloat(overlay.style.left) -
+      viewportOffset.left}px`;
+    overlay.style.top = `${parseFloat(overlay.style.top) -
+      viewportOffset.top}px`;
+
+    overlay2.style.transform = `scale(${1 / zoom})`;
+    overlay2.style.position = "absolute";
+    overlay2.style.left = `${parseFloat(overlay2.style.left) -
+      viewportOffset2.left}px`;
+    overlay2.style.top = `${parseFloat(overlay2.style.top) -
+      viewportOffset2.top +
+      viewportOffset.height}px`;
   });
 
   //init pressure settings

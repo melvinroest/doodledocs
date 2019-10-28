@@ -47,17 +47,14 @@
     "eslint-plugin-ember": "^6.2.0",
     "eslint-plugin-node": "^9.0.1",
     "loader.js": "^4.7.0",
-    "qunit-dom": "^0.8.4",
-    "scroll-lock": "^2.1.2"
+    "qunit-dom": "^0.8.4"
   },
   "engines": {
     "node": "8.* || >= 10.*"
   },
   "dependencies": {
-    "@simonwep/pickr": "^1.4.5",
+    "pickr": "file:vendor/edited/pickr",
     "bugout": "file:vendor/edited/bugout",
-    "requirejs": "^2.3.6",
-    "socket.io-client": "^2.3.0",
-    "socketio-wildcard": "^2.0.0"
+    "scroll-lock": "file:vendor/edited/scroll-lock"
   }
 }

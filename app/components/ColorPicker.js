@@ -1,5 +1,5 @@
-// import Pickr from "@simonwep/pickr/dist/pickr.es5.min";
-import Pickr from "@simonwep/pickr";
+// import Pickr from "doodledocs-app/vendor/edited/pickr/dist/pickr.es5.min.js";
+import Pickr from "pickr";
 
 // function needed in order to patch the library
 const on = eventListener.bind(null, "addEventListener");
@@ -49,7 +49,7 @@ export default class ColorPicker {
       inline: false,
       // If true, pickr will be repositioned automatically on page scroll or window resize.
       // Can be set to false to make custom positioning easier.
-      autoReposition: true,
+      autoReposition: false,
       // Defines the direction in which the knobs of hue and opacity can be moved.
       // 'v' => opacity- and hue-slider can both only moved vertically.
       // 'hv' => opacity-slider can be moved horizontally and hue-slider vertically.
@@ -148,7 +148,7 @@ export default class ColorPicker {
     //     console.log("swatchselect", color, instance);
     //   });
 
-    console.log("pickr", pickr);
+    // console.log("pickr", pickr);
     pickr._eventBindings.push(
       on(pickr._root.button, "pointerdown", () => {
         this.isOpen() ? this.hide() : this.show();
@@ -164,7 +164,7 @@ export default class ColorPicker {
    * Hides the color-picker ui.
    */
   hide() {
-    console.log("hide", this);
+    // console.log("hide", this);
     this.pickr._root.app.classList.remove("visible");
     this.pickr._emit("hide", this);
     return this;
@@ -174,7 +174,7 @@ export default class ColorPicker {
    * Shows the color-picker ui.
    */
   show() {
-    console.log("show", this);
+    // console.log("show", this);
     this.pickr._root.app.classList.add("visible");
     this.pickr._rePositioningPicker();
     this.pickr._emit("show", this);
@@ -185,7 +185,7 @@ export default class ColorPicker {
    * @return {boolean} If the color picker is currently open
    */
   isOpen() {
-    console.log(this);
+    // console.log(this);
     return this.pickr._root.app.classList.contains("visible");
   }
 }
