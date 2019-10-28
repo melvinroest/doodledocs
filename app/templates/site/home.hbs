@@ -1,0 +1,38 @@
+<section class="grid-container grid-clearfix">
+  <div class="col2">
+    <h1>Draw together on the web</h1>
+    <p>Doodle Docs allows you to sketch and collaborate with your pressure sensitive stylus-powered tablet or your
+      laptop.</p>
+    <button>
+      {{#link-to "app.doc" this.model.randomURL class="button"}}
+      <div>
+        <img src="{{this.target.location.rootURL}}doodle docs logo.png" />
+        <div>Open New Doodle Doc<span>(And share the link with friends)</span></div>
+      </div>
+      {{/link-to}}
+    </button>
+    <br />
+    <button>
+      {{#link-to "app.doc" "public" class="button"}}
+      <div>
+        <img src="{{this.target.location.rootURL}}doodle docs logo.png" />
+        <div>Open Public Doodle Doc<span>(And meet someone new! Everyone can draw here)</span></div>
+      </div>
+      {{/link-to}}
+    </button>
+  </div>
+  <div class="col2 example">
+    <img src="{{this.target.location.rootURL}}prototype-example1.gif" />
+  </div>
+</section>
+<section class="blue">
+  <div class="grid-container grid-clearfix">
+    <h1 class="center">Examples</h1>
+    {{#each this.model.examples as |example|}}
+    <ExampleImage @caption={{example.caption}}>
+      <img src="{{this.target.location.rootURL}}{{example.image}}" />
+    </ExampleImage>
+    {{/each}}
+  </div>
+</section>
+{{outlet}}

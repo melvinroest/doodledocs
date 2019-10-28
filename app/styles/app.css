@@ -1,0 +1,363 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 1.6em;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 800px) and (max-width: 1400px) {
+  html {
+    font-size: 1.5em;
+  }
+}
+
+html,
+body,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  font-size: 1em;
+}
+
+/* Simple 2 column grid system */
+
+.grid-container {
+  margin-right: 20px;
+  margin-left: 20px;
+}
+
+@media (min-width: 800px) {
+  .grid-container {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 90%;
+  }
+}
+
+.col2,
+.col3 {
+  text-align: center;
+}
+
+@media (min-width: 800px) {
+  .col2 {
+    width: 50%;
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
+@media (min-width: 800px) {
+  .col3 {
+    width: 33.33333%;
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
+@media (min-width: 800px) {
+  .grid-clearfix:after {
+    display: table;
+    clear: both;
+    content: "";
+  }
+}
+
+body {
+  font-family: "Roboto Mono for Powerline", Arial, Helvetica, sans-serif;
+  font-weight: 100;
+}
+
+header,
+footer {
+  background-color: #ffe74c;
+  width: 100%;
+  padding: 20px;
+}
+
+header {
+  position: relative;
+  min-height: 100px;
+}
+
+header#app-header {
+  position: fixed; /* could be relative */
+  z-index: 100;
+  min-height: 132px;
+}
+
+header img {
+  max-height: 60px;
+}
+
+@media (min-width: 800px) {
+  header img {
+    position: absolute;
+    bottom: 10px;
+  }
+}
+
+@media (min-width: 800px) {
+  header#site-header span {
+    margin-left: 280px;
+  }
+  header span {
+    position: relative; /* was absolute */
+    top: 0px;
+  }
+}
+
+@media (min-width: 800px) {
+  nav {
+    position: absolute;
+    right: 5%;
+  }
+  nav#site-nav {
+    bottom: 10px;
+  }
+  nav#app-nav {
+    bottom: 20px;
+  }
+}
+
+/*CONTENT*/
+
+main section h1 {
+  font-family: "Roboto Mono Medium for Powerline", Arial, Helvetica, sans-serif;
+}
+
+main section h1.center {
+  text-align: center;
+}
+
+/*section div.example > img {
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+}
+
+section div.example > p {
+  text-align: center;
+}*/
+
+section button {
+  font-family: "Roboto Mono for Powerline", Arial, Helvetica, sans-serif;
+  font-weight: 100;
+  height: 100px;
+  background-color: white; /* Green */
+  border: 1px solid black;
+  display: inline-block;
+  font-size: 1.25em;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
+}
+
+@media (min-width: 800px) and (max-width: 1400px) {
+  section button {
+    font-size: 0.95em;
+    height: 102px;
+  }
+}
+
+section button div {
+  height: 80%;
+}
+
+button a {
+  color: black;
+  text-decoration: none;
+}
+
+section button img {
+  position: relative;
+  height: 100%;
+  float: left;
+}
+
+button {
+  margin: 20px;
+}
+
+button div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+button div div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button span {
+  font-size: 0.5em;
+}
+
+.blue {
+  background-color: #ebfbff;
+}
+
+.example img {
+  width: 100%;
+  max-width: 250px;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.example {
+  margin-bottom: 20px;
+}
+
+.example:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 800px) {
+  .example img {
+    max-width: 400px;
+  }
+}
+
+/* footer pushdown */
+
+main {
+  padding-bottom: 5rem;
+}
+
+#page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  height: 5rem;
+}
+
+/* other features */
+
+#iframed-page {
+  position: absolute;
+  height: 300vh;
+  z-index: 90;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #fffbeb;
+  border: 0;
+  margin-top: 132px; /* because of fixed header#app-header */
+  pointer-events: none; /* maybe this doesn't work -- todo */
+  overflow: hidden; /* maybe this doesn't work -- todo */
+}
+
+.pickr {
+  position: relative;
+  display: inline;
+  top: 5px;
+  bottom: 0px;
+  margin: 0;
+  margin-right: 30px;
+  padding: 0px;
+  /* height: 20px;
+  width: 20px; */
+}
+
+.pickr button.pcr-button {
+  position: absolute; /* this positioning is needed for cross-browser compatibility with Safari */
+  display: inline-block;
+  top: 0px;
+  bottom: 0px;
+  height: 20px;
+  width: 20px;
+  margin: 0px;
+  margin-top: 0px;
+  padding: 0px;
+  padding-top: 0px;
+}
+
+input {
+  overflow: visible;
+  margin: 0;
+}
+
+/* input text from bootstrap */
+.form-control {
+  position: relative;
+  top: -4px;
+  width: 25%;
+  min-width: 300px;
+  padding: 0.2em 0.4em;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* slider from inspired from materializecss */
+input[type="range"] {
+  color: #000;
+  position: relative;
+  background-color: transparent;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  width: 10%;
+  margin: 15px 0;
+  padding: 0;
+  cursor: pointer;
+  overflow: visible;
+  margin-left: 10px;
+
+  -webkit-writing-mode: horizontal-tb !important;
+  text-rendering: auto;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: start;
+  -webkit-rtl-ordering: logical;
+  font: 400 11px system-ui;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 3px;
+  background: #c2c0c2;
+  border: none;
+  font-size: 100%;
+  line-height: 1.15;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: rgb(0, 120, 255);
+  -webkit-transition: -webkit-box-shadow 0.3s;
+  transition: -webkit-box-shadow 0.3s;
+  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s, -webkit-box-shadow 0.3s;
+  -webkit-appearance: none;
+  background-color: rgb(0, 120, 255);
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  margin: -5px 0 0 0;
+}

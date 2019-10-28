@@ -1,0 +1,29 @@
+<main>
+  <header id="app-header">
+    <img id="app-img-header" src="{{this.target.location.rootURL}}doodle docs big logo.png"
+      style="right: 10px; top: 10px;" />
+    <span>Options: <a id="download" href="#download">Download</a>
+      | <a id="upload-menu-item" href="#upload">Upload</a>
+      | <a href="#share" id="share"
+        onclick="alert(`Link/URL copied to clipboard. When friends click on the same URL, they see you draw from then on. They do not see what you drawed in the past.`)">Share</a>
+      | Canvas Mode: <a id="scroll-menu-item-on" href="#using-scroll-on">scroll</a>/<a id="scroll-menu-item-off"
+        href="#scroll-off">draw</a></span>
+    <br />
+    {{!-- Needs to be type email for iOS compatibility --}}
+    <span>Website: <input id="w-input-menu-item" type="email" autocorrect="off" autocapitalize="none"
+        class="form-control" /> <a id="w-submit-menu-item" href="#annotate-website">Go</a></span>
+    <br />
+    <span>Website transparency: <input id="website-slider-menu-item" type="range" name="website-opacity" value="1"
+        min="0" max="1" step="0.01" /></span>
+    <br />
+    <span>Palette: <a id="pencil" href="#using-pencil">Pencil</a><span
+        style="margin: 0; margin-left: 10px; padding: 1px 7px 2px; top: 0;" id="pencil-picker"></span> |
+      <a id="eraser" href="#using-eraser">Eraser</a>
+      {{!-- | <a id="browse-menu-item" href="#browse">Draw tools off</a>--}}
+    </span>
+    <nav id="app-nav">
+      {{#link-to "site.home" class="button"}}Home{{/link-to}}
+    </nav>
+  </header>
+  {{outlet}}
+</main>

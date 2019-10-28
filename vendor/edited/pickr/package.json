@@ -1,0 +1,81 @@
+{
+  "_from": "@simonwep/pickr",
+  "_id": "@simonwep/pickr@1.4.5",
+  "_inBundle": false,
+  "_integrity": "sha512-OWbzHbmxBctkZpMIY9ipsB/MzS1VHYKZuMI+jdThsyKnz1a0Es8IzTnQSclMk50dwgbaE5qmoxZnu+JrYKX1Ow==",
+  "_location": "/@simonwep/pickr",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@simonwep/pickr",
+    "name": "@simonwep/pickr",
+    "escapedName": "@simonwep%2fpickr",
+    "scope": "@simonwep",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@simonwep/pickr/-/pickr-1.4.5.tgz",
+  "_shasum": "a1e04b87f552c32cf2245996b5f076040699732b",
+  "_spec": "@simonwep/pickr",
+  "_where": "/Users/melvinroest/Desktop/magic/doodledocs/doodledocs-app",
+  "author": {
+    "name": "Simon Reinisch",
+    "email": "trash@reinisch.io"
+  },
+  "bugs": {
+    "url": "https://github.com/Simonwep/pickr/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Flat, Simple, Hackable Color-Picker.",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "autoprefixer": "^9.6.1",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "eslint": "^6.3.0",
+    "eslint-loader": "^3.0.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.12.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.0",
+    "typescript": "^3.6.3",
+    "webpack": "^4.41.2",
+    "webpack-cleanup-plugin": "^0.5.1",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.0",
+    "webpack-fix-style-only-entries": "^0.3.1"
+  },
+  "homepage": "https://github.com/Simonwep/pickr#readme",
+  "keywords": [
+    "ux",
+    "color",
+    "color-picker"
+  ],
+  "license": "MIT",
+  "main": "./dist/pickr.min.js",
+  "name": "@simonwep/pickr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Simonwep/pickr.git"
+  },
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "dev": "webpack-dev-server --mode development",
+    "lint": "eslint ./src --fix",
+    "test:ts": "tsc --target ES6 --noImplicitAny --noEmit spec/ts/index.ts"
+  },
+  "typings": "./types/pickr.d.ts",
+  "version": "1.4.5"
+}

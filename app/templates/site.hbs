@@ -1,0 +1,15 @@
+<main>
+  <header id="site-header">
+    <img src="{{this.target.location.rootURL}}doodle docs big logo.png" />
+    <span>Early Alpha</span>
+    <nav id="site-nav">
+      {{#link-to "site.home" class="button"}}Home{{/link-to}}
+      |
+      {{#link-to "site.faq" class="button"}}FAQ{{/link-to}}
+    </nav>
+  </header>
+  {{outlet}}
+</main>
+<footer>
+  <p>Made with ❤️ by <img src="{{this.target.location.rootURL}}melvin.png"></p>
+</footer>

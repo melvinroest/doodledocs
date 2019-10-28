@@ -1,0 +1,9 @@
+{{log this}}
+
+<div id="doc-content">
+  <Doodledoc />
+  {{!-- <iframe id="iframed-page" src={{website-validation w}}></iframe> --}}
+  {{!-- <x-frame-bypass is="x-frame-bypass" src="https://news.ycombinator.com/"></x-frame-bypass> --}}
+  <XFrame @scrolling="no" @id="iframed-page" @src={{website-validation w}} @srcdoc=""></XFrame>
+
+</div>

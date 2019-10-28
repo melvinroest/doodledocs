@@ -1,0 +1,74 @@
+{
+  "_args": [
+    [
+      "scroll-lock@2.1.2",
+      "/Users/melvinroest/Desktop/magic/doodledocs/doodledocs-app"
+    ]
+  ],
+  "_development": true,
+  "_from": "scroll-lock@2.1.2",
+  "_id": "scroll-lock@2.1.2",
+  "_inBundle": false,
+  "_integrity": "sha512-m/gjn3+bOtyc4jS9fE4FYOLypzRDoV3vICnA0kz6TVUL4gQWUVqPT9cqaU2FbMo9doNDBKiBV2pP8L2+98We5g==",
+  "_location": "/scroll-lock",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "scroll-lock@2.1.2",
+    "name": "scroll-lock",
+    "escapedName": "scroll-lock",
+    "rawSpec": "2.1.2",
+    "saveSpec": null,
+    "fetchSpec": "2.1.2"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://registry.npmjs.org/scroll-lock/-/scroll-lock-2.1.2.tgz",
+  "_spec": "2.1.2",
+  "_where": "/Users/melvinroest/Desktop/magic/doodledocs/doodledocs-app",
+  "author": {
+    "name": "FL3N"
+  },
+  "bugs": {
+    "url": "https://github.com/FL3NKEY/scroll-lock/issues"
+  },
+  "description": "Cross-browser JavaScript library to disable scrolling page.",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "browser-sync": "^2.26.3",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "cross-env": "^5.2.1",
+    "jest": "^24.1.0",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "webpack": "^4.29.1",
+    "webpack-cli": "^3.2.3"
+  },
+  "homepage": "https://github.com/FL3NKEY/scroll-lock#readme",
+  "keywords": [
+    "scroll",
+    "scrollbar",
+    "ios",
+    "lock scroll",
+    "disable scroll",
+    "modal",
+    "mobile",
+    "overflow"
+  ],
+  "license": "MIT",
+  "main": "dist/scroll-lock.js",
+  "name": "scroll-lock",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FL3NKEY/scroll-lock.git"
+  },
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "cross-env NODE_ENV=development webpack",
+    "test": "jest"
+  },
+  "version": "2.1.2"
+}
