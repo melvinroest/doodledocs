@@ -76,7 +76,10 @@ module.exports = function(environment) {
     if (process.env.TARGET === "gh-pages") {
       ENV.rootURL = "/doodledocs/";
     }
-    if (process.env.TARGET === "local-test-gh-pages") {
+    if (
+      process.env.TARGET === "doodledocs" ||
+      process.env.TARGET === "local-test-gh-pages"
+    ) {
       ENV.rootURL = "/";
     }
   }
