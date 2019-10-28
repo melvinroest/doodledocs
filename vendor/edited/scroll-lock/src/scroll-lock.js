@@ -445,7 +445,12 @@ const onTouchMove = (e) => {
 
             // console.log('handle(e.target)', e);
             // hack -- no clue how to get around it, so I simply do the following -- Melvin
-            if (e.target.tagName === 'A' || e.target.tagName === 'INPUT') {
+            if (
+                e.target.tagName === 'A' ||
+                e.target.tagName === 'INPUT' ||
+                e.target.tagName === 'SPAN' ||
+                e.target.tagName === 'BUTTON'
+            ) {
                 return;
             }
             handle(e.target);

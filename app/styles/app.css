@@ -259,6 +259,8 @@ footer {
   background-color: #fffbeb;
   border: 0;
   margin-top: 132px; /* because of fixed header#app-header */
+  pointer-events: none; /* maybe this doesn't work -- todo */
+  overflow: hidden; /* maybe this doesn't work -- todo */
 }
 
 .pickr {
