@@ -1,37 +1,86 @@
 import Pressure from "pressure";
 
+class DrawState {
+  constructor() {
+    this.prevX = undefined;
+    this.prevY = undefined;
+    this.started = false;
+  }
+}
+
+//this.start
+//this.startDeepPress
+function startDraw(state, e) {
+  state.started = true;
+  state.lastX = e._x - e.target.offsetLeft;
+  state.lastY = e._y - e.target.offsetTop;
+}
+
+function duringDraw(state, e) {
+  // let inputDevice = e.touches[0].touchType;
+  let inputDevice = "stylus";
+  if (inputDevice === "stylus") {
+    if (state.started) {
+      let args = {
+        e,
+        lastX: state.lastX,
+        lastY: state.lastY,
+        color: pencil.color,
+        thickness: pencil.thickness,
+        context: context,
+        isMakingOwnChanges: true,
+        transmissionService: transmissionSerice,
+        mode: this.mode === "pencil" ? "fill" : "clear"
+      };
+      let last = bresenhamsLineAlgorithm.call(this, args);
+      this.lastX = last.lastX;
+      this.lastY = last.lastY;
+      drawHud(this.hudContext, this.canvas, this.thickness, e._x, e._y);
+    }
+  }
+}
+
+//this.end
+//this.endDeepPress
+function endDraw(state, e) {
+  if (state.started) {
+    state.started = false;
+  }
+}
+
 //emberComponent
-export default function init(context, pencil) {
+export default function init(context) {
   const canvas = context.canvas;
+  const state = new DrawState();
 
   //init pressure settings
   let block = {
     start: e => {
       e = mousePosOnCanvas.call(this, e);
-      pencil.startDraw(e);
+      startDraw(state, e);
     },
 
     startDeepPress: e => {
       e = mousePosOnCanvas.call(this, e);
-      pencil.startDraw(e);
+      startDraw(state, e);
     },
 
     change: (force, e) => {
       e.userForce = force;
       e = mousePosOnCanvas.call(this, e);
-      pencil.duringDraw(e);
+      duringDraw(e);
     },
 
     end: () => {
       let e = {};
       e = mousePosOnCanvas.call(this, e);
-      pencil.endDraw(e);
+      endDraw(state, e);
     },
 
     endDeepPress: () => {
       let e = {};
       e = mousePosOnCanvas.call(this, e);
-      pencil.endDraw(e);
+      endDraw(state, e);
     },
 
     unsupported: () => {
