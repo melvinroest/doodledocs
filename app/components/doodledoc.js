@@ -4,7 +4,9 @@ import { computed } from "@ember/object";
 import { getOwner } from "@ember/application";
 import drawEngine from "./draw-engine";
 import { initMenu } from "./menu";
-import Pencil from "./Pencil";
+import DrawTools from "./DrawTools";
+import PubSub from "pubsub-js";
+import { TOPIC_DRAW_DATA } from "./pubsub-topics";
 
 export default Component.extend({
   //So I can't use arrow functions because the this object is bound to the function or something?
@@ -29,22 +31,17 @@ export default Component.extend({
 
     disablePageScroll();
 
-    const pencil = new Pencil(
-      "rgba(0, 0, 0, 0.5)", //color
-      1, //thickness
-      context,
-      canvas,
-      hudContext,
-      transmissionService
-    );
-    initMenu(this, pencil, context);
-    drawEngine.call(this, hudContext, context, transmissionService, pencil);
+    const tools = new DrawTools();
+    initMenu(this, context, tools);
+    const drawState = drawEngine.init(context, hudContext, tools);
 
     transmissionService.onReceivingMessage((data, address) => {
-      if (data.e) {
-        drawEngine.partnerMakesChanges(data, context, hudContext);
-      }
+      drawEngine.draw(drawState, data);
     });
+    const token = PubSub.subscribe(
+      TOPIC_DRAW_DATA,
+      broadcastDrawData(transmissionService)
+    );
   },
   willDestroyElement() {
     enablePageScroll();
@@ -61,4 +58,12 @@ function initCanvas(canvas) {
   canvas.height = canvas.offsetHeight;
   context.clearRect(0, 0, canvas.width, canvas.height);
   return context;
+}
+
+function broadcastDrawData(transmissionService) {
+  return (msg, data) => {
+    // if (isMakingOwnChanges) { // <-- most likely I don't need this
+    // data.currX, data.currY, data.prevX, data.prevY;
+    transmissionService.send(data);
+  };
 }

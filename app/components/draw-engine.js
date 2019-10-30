@@ -1,10 +1,25 @@
 import Pressure from "pressure";
+import PubSub from "pubsub-js";
+import { TOPIC_DRAW_DATA } from "./pubsub-topics";
 
 class DrawState {
-  constructor() {
+  constructor(context, hudContext, drawTools) {
     this.prevX = undefined;
     this.prevY = undefined;
     this.started = false;
+    this.context = context;
+    this.hudContext = hudContext;
+    this.drawTools = drawTools;
+  }
+}
+
+class DrawData {
+  constructor(currX, currY, prevX, prevY, force) {
+    this.currX = currX;
+    this.currY = currY;
+    this.prevX = prevX;
+    this.prevY = prevY;
+    this.force = force;
   }
 }
 
@@ -12,8 +27,8 @@ class DrawState {
 //this.startDeepPress
 function startDraw(state, e) {
   state.started = true;
-  state.lastX = e._x - e.target.offsetLeft;
-  state.lastY = e._y - e.target.offsetTop;
+  state.prevX = e._x - e.target.offsetLeft;
+  state.prevY = e._y - e.target.offsetTop;
 }
 
 function duringDraw(state, e) {
@@ -21,74 +36,81 @@ function duringDraw(state, e) {
   let inputDevice = "stylus";
   if (inputDevice === "stylus") {
     if (state.started) {
-      let args = {
-        e,
-        lastX: state.lastX,
-        lastY: state.lastY,
-        color: pencil.color,
-        thickness: pencil.thickness,
-        context: context,
-        isMakingOwnChanges: true,
-        transmissionService: transmissionSerice,
-        mode: this.mode === "pencil" ? "fill" : "clear"
-      };
-      let last = bresenhamsLineAlgorithm.call(this, args);
-      this.lastX = last.lastX;
-      this.lastY = last.lastY;
-      drawHud(this.hudContext, this.canvas, this.thickness, e._x, e._y);
+      const data = new DrawData(
+        e._x,
+        e._y,
+        state.prevX,
+        state.prevY,
+        e.userForce
+      );
+      PubSub.publish(TOPIC_DRAW_DATA, data); //transmissionService needs to listen in on this
+      draw(state, data);
+      state.prevX = data.currX;
+      state.prevY = data.currY;
     }
   }
 }
 
 //this.end
 //this.endDeepPress
-function endDraw(state, e) {
+function endDraw(state) {
   if (state.started) {
     state.started = false;
   }
 }
 
 //emberComponent
-export default function init(context) {
+export function init(context, hudContext, drawTools) {
   const canvas = context.canvas;
-  const state = new DrawState();
+  const state = new DrawState(context, hudContext, drawTools);
 
   //init pressure settings
   let block = {
     start: e => {
-      e = mousePosOnCanvas.call(this, e);
+      e = mousePosOnCanvas(e);
       startDraw(state, e);
     },
 
     startDeepPress: e => {
-      e = mousePosOnCanvas.call(this, e);
+      e = mousePosOnCanvas(e);
       startDraw(state, e);
     },
 
     change: (force, e) => {
       e.userForce = force;
-      e = mousePosOnCanvas.call(this, e);
-      duringDraw(e);
+      e = mousePosOnCanvas(e);
+      duringDraw(state, e);
     },
 
     end: () => {
-      let e = {};
-      e = mousePosOnCanvas.call(this, e);
-      endDraw(state, e);
+      endDraw(state);
     },
 
     endDeepPress: () => {
-      let e = {};
-      e = mousePosOnCanvas.call(this, e);
-      endDraw(state, e);
-    },
-
-    unsupported: () => {
-      this.innerHTML = "Your device / browser does not support this :(";
+      endDraw(state);
     }
+
+    // todo: implement unsupported
+    // unsupported: () => {
+    //   this.innerHTML = "Your device / browser does not support this :(";
+    // }
   };
 
   Pressure.set(canvas, block);
+
+  return state;
+}
+
+export function draw(state, data) {
+  const coordinates = bresenhamsLineAlgorithm(data, detectPalm);
+  drawToCanvas(state, coordinates, data.force);
+  drawHud(state, data.currX, data.currY);
+}
+
+function drawToCanvas(state, coordinates, force) {
+  coordinates.forEach(coord => {
+    state.drawTools.active.render(state.context, coord.x, coord.y, force);
+  });
 }
 
 function mousePosOnCanvas(e) {
@@ -106,58 +128,42 @@ function mousePosOnCanvas(e) {
   return e;
 }
 
-export function drawHud(hudContext, lineThickness, x, y) {
+function drawHud(state, x, y) {
   /* draw all circles */
-  hudContext.clearRect(0, 0, hudContext.canvas.width, hudContext.canvas.height);
-  hudContext.strokeStyle = "#f00";
-  hudContext.lineWidth = 1;
-  hudContext.beginPath();
+  //note: this will interfere with multi-user hud drawing
+  state.hudContext.clearRect(
+    0,
+    0,
+    state.hudContext.canvas.width,
+    state.hudContext.canvas.height
+  );
+  state.hudContext.strokeStyle = "#f00";
+  state.hudContext.lineWidth = 1;
+  state.hudContext.beginPath();
 
-  // need adjustX & Y for tool overlay
-  const adj = lineThickness / 2;
-  hudContext.rect(x - adj, y - adj, lineThickness, lineThickness);
-  hudContext.stroke();
-}
-
-export function partnerMakesChanges(data, context, hudContext) {
-  //hudcontext needs to be used for a hud display for the partner
-  data.context = context;
-  data.isMakingOwnChanges = false;
-  data.b = undefined; //todo: rename b to bugout
-  // data.context.fillStyle = "red"; //debug
-  bresenhamsLineAlgorithm(data);
-  drawHud(hudContext, data.thickness, data.e._x, data.e._y);
+  // need adjustX & Y for drawTool overlay
+  const adj = state.drawTools.active.thickness / 2;
+  state.hudContext.rect(
+    x - adj,
+    y - adj,
+    state.drawTools.active.thickness,
+    state.drawTools.active.thickness
+  );
+  state.hudContext.stroke();
 }
 
 // https://stackoverflow.com/questions/10122553/create-a-realistic-pencil-tool-for-a-painting-app-with-html5-canvas
-// todo: the calculation shouldn't care about drawing, just calculating coord stuff
-export function bresenhamsLineAlgorithm(args) {
+function bresenhamsLineAlgorithm(data, determineIfValidDrawCallback) {
   // method of explanation: draw a star from inside out, coord-system: * clock-wise quadrants starting with top vertical as 1, bottom vertical is 5
   // How this algo works in short: it is able to draw
   // 1 - 3 * and 5 - 7 * and then flips it on the y-axis if needed to produce
   // 3 - 5 * and 8 - 1 *
-  let {
-    e,
-    lastX,
-    lastY,
-    color,
-    context,
-    thickness,
-    isMakingOwnChanges,
-    transmissionService,
-    mode
-  } = args;
-  context.fillStyle = color;
-
-  //todo: wrong level of abstraction
-  let mouseX = e._x;
-  let mouseY = e._y;
 
   // draws between below left horizontal and diagonal, 6-7 of *
-  let x1 = mouseX;
-  let x2 = lastX;
-  let y1 = mouseY;
-  let y2 = lastY;
+  let x1 = data.currX;
+  let x2 = data.prevX;
+  let y1 = data.currY;
+  let y2 = data.prevY;
   let x = undefined;
   let y = undefined;
 
@@ -200,39 +206,20 @@ export function bresenhamsLineAlgorithm(args) {
     yStep = 1;
   }
 
-  let palmIsDetected = detectPalm(x1, x2, y1, y2); //rudimentary and simple
+  let shouldDraw = determineIfValidDrawCallback(x1, x2, y1, y2);
 
-  //todo: move this somewhere else, bresenham should not be aware of data sending
-  if (isMakingOwnChanges && palmIsDetected === false) {
-    let data = {
-      e: {
-        _x: e._x,
-        _y: e._y,
-        userForce: e.userForce
-      },
-      lastX,
-      lastY,
-      color,
-      thickness,
-      mode
-    };
-    // partnerMakesChanges
-    transmissionService.send(data);
-  }
-  //some line thickness settings
-  // alert(`${x}, ${y}, ${lineThickness}`);
-  thickness = thickness + 8 * e.userForce;
-  // need adj for tool overlay
-  const adj = thickness / 2;
-
+  const coordinates = [];
   for (let x = x1; x < x2; x++) {
-    if (palmIsDetected === false) {
+    if (shouldDraw) {
       if (isSteep) {
-        //does up/down
-        drawRect(context, y - adj, x - adj, thickness, mode);
+        //does up/down -- flipped key-value mapping
+        coordinates.push({
+          x: y,
+          y: x
+        });
       } else {
-        //does left/right
-        drawRect(context, x - adj, y - adj, thickness, mode);
+        //does left/right -- normal key-value mapping
+        coordinates.push({ x, y });
       }
     }
 
@@ -245,23 +232,7 @@ export function bresenhamsLineAlgorithm(args) {
     }
   }
 
-  //todo: rename to prevX and prevY
-  lastX = mouseX;
-  lastY = mouseY;
-  return { lastX, lastY };
-}
-
-//todo: switch, should not be called drawRect, should probably not be here (?)
-//should be in pencil + eraser class
-function drawRect(context, x, y, thickness, mode) {
-  if (mode === "fill") {
-    context.fillRect(x, y, thickness, thickness);
-  } else if (mode === "clear") {
-    context.clearRect(x, y, thickness, thickness);
-  } else {
-    //legacy (partnerMakesChanges makes use of this, todo: change this -- this only matters atm for iframe support)
-    context.fillRect(x, y, thickness, thickness);
-  }
+  return coordinates;
 }
 
 // rudimentary palm cancellation -- I simply logged values and handcoded a threshold that I think is too big
@@ -274,5 +245,6 @@ function detectPalm(x1, x2, y1, y2) {
   const diffPct = diffX + diffY;
 
   const palmDetected = diffPct > thresholdPercent;
-  return palmDetected;
+  const shouldDraw = !palmDetected;
+  return shouldDraw;
 }

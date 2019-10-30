@@ -53,8 +53,9 @@
     "node": "8.* || >= 10.*"
   },
   "dependencies": {
-    "pickr": "file:vendor/edited/pickr",
     "bugout": "file:vendor/edited/bugout",
+    "pickr": "file:vendor/edited/pickr",
+    "pubsub-js": "^1.7.0",
     "scroll-lock": "file:vendor/edited/scroll-lock"
   }
 }

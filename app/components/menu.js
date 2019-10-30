@@ -7,16 +7,16 @@ const CanvasModeEnum = Object.freeze({
   SCROLL: Symbol("scroll")
 });
 
-export function initMenu(emberObject, pencil, context) {
+export function initMenu(emberObject, context, tools) {
   const canvas = context.canvas;
   let canvasMode = CanvasModeEnum.DRAW;
 
   //color picker
   const newElement = document.getElementById("pencil-picker");
-  const picker = new ColorPicker(newElement, pencil.color);
+  const picker = new ColorPicker(newElement, tools.pencil.color);
   picker.on("change", (color, instance) => {
     const colorRGBA = color.toRGBA().toString();
-    pencil.color = colorRGBA;
+    tools.pencil.color = colorRGBA;
   });
 
   //upload functionality -- todo: make cross-browser compatible
@@ -34,14 +34,12 @@ export function initMenu(emberObject, pencil, context) {
   ["click"].forEach(function(eventName) {
     //init buttons
     document.getElementById("pencil").addEventListener(eventName, e => {
-      pencil.thickness = 1; //todo: turn this into a widget
-      pencil.mode = "pencil";
+      tools.active = tools.pencil;
     });
   });
   ["click"].forEach(function(eventName) {
     document.getElementById("eraser").addEventListener(eventName, e => {
-      pencil.thickness = 20; //todo: turn this into a widget
-      pencil.mode = "eraser";
+      tools.active = tools.eraser;
     });
   });
   ["click"].forEach(function(eventName) {
