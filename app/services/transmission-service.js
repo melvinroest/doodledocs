@@ -88,12 +88,18 @@ export default Service.extend({
       let socket = this.transmissionInstance;
       socket.onmessage = data => {
         const parsedData = JSON.parse(data.data);
-        if (
-          parsedData.type !== "ping" &&
-          parsedData.type !== "welcome" &&
-          parsedData.type !== "confirm_subscription"
-        ) {
-          cb(parsedData.message.args);
+
+        switch (parsedData.type) {
+          case "ping":
+          case "welcome":
+          case "confirm_subscription":
+            break;
+
+          default: {
+            const address = undefined;
+            cb(parsedData.message.args, address);
+            break;
+          }
         }
       };
     }

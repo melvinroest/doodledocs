@@ -1,8 +1,8 @@
 <section class="grid-container grid-clearfix">
   <div class="col2">
     <h1>Draw together on the web</h1>
-    <p>Doodle Docs allows you to sketch and collaborate with your pressure sensitive stylus-powered tablet or your
-      laptop.</p>
+    <p>Doodle Docs allows you to sketch, annotate images and collaborate with your pressure sensitive stylus in your
+      browser*.</p>
     <button>
       {{#link-to "app.doc" this.model.randomURL class="button"}}
       <div>
@@ -20,6 +20,15 @@
       </div>
       {{/link-to}}
     </button>
+    <p class="mini-text">
+      <br />
+      * Tested with:
+      <ul>
+        <li>Google Chrome (laptop/Wacom, laptop/mouse, iPad/Apple Pencil)</li>
+        <li>Safari (iPad/Apple Pencil)</li>
+        <li>Would you like to test it with something else? 😉</li>
+      </ul>
+    </p>
   </div>
   <div class="col2 example">
     <img src="{{this.target.location.rootURL}}prototype-example1.gif" />
@@ -27,7 +36,9 @@
 </section>
 <section class="blue">
   <div class="grid-container grid-clearfix">
-    <h1 class="center">Examples</h1>
+    <h1 class="center">Examples <br /><span class="subtitle-h1">(including examples made with the very first
+        prototype)</span>
+    </h1>
     {{#each this.model.examples as |example|}}
     <ExampleImage @caption={{example.caption}}>
       <img src="{{this.target.location.rootURL}}{{example.image}}" />

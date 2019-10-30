@@ -3,16 +3,16 @@ import { bresenhamsLineAlgorithm } from "./draw-engine";
 
 export default class Pencil {
   constructor(
-    pencilColor,
-    pencilThickness,
+    color,
+    thickness,
     context,
     canvas,
     hudContext,
     transmissionSerice
   ) {
     this.started = false;
-    this.pencilColor = pencilColor;
-    this.pencilThickness = pencilThickness;
+    this.color = color;
+    this.thickness = thickness;
     this.context = context;
     this.canvas = canvas;
     this.hudContext = hudContext;
@@ -24,7 +24,6 @@ export default class Pencil {
   //this.startDeepPress
   startDraw(e) {
     this.started = true;
-    // this.context.fillStyle = this.pencilColor; //I don't think this is needed
     this.lastX = e._x - e.target.offsetLeft;
     this.lastY = e._y - e.target.offsetTop;
   }
@@ -38,9 +37,9 @@ export default class Pencil {
           e,
           lastX: this.lastX,
           lastY: this.lastY,
-          pencilColor: this.pencilColor,
+          color: this.color,
+          thickness: this.thickness,
           context: this.context,
-          pencilThickness: this.pencilThickness,
           isMakingOwnChanges: true,
           transmissionService: this.transmissionSerice,
           mode: this.mode === "pencil" ? "fill" : "clear"
@@ -48,7 +47,7 @@ export default class Pencil {
         let last = bresenhamsLineAlgorithm.call(this, args);
         this.lastX = last.lastX;
         this.lastY = last.lastY;
-        drawHud(this.hudContext, this.canvas, this.pencilThickness, e._x, e._y);
+        drawHud(this.hudContext, this.canvas, this.thickness, e._x, e._y);
       }
     }
   }
