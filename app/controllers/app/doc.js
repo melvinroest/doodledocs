@@ -1,18 +1,11 @@
 import Controller from "@ember/controller";
 
 export default Controller.extend({
-  w: "",
-  m: "draw",
+  website: "",
   queryParams: [
     {
-      w: {
+      website: {
         type: "string"
-      },
-      m: {
-        type: "string"
-      },
-      l: {
-        type: "boolean"
       }
     }
   ]
