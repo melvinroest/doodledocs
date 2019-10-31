@@ -2,10 +2,13 @@
   box-sizing: border-box;
 }
 
-html {
+body {
   font-size: 1.6em;
   width: 100%;
   height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 800px) and (max-width: 1400px) {
@@ -245,7 +248,11 @@ button span {
 /* footer pushdown */
 
 main {
-  padding-bottom: 5rem;
+  min-height: calc(100vh - 200px); /* 100px for header and footer size */
+}
+
+div.static {
+  height: calc(100vh - 200px); /* 100px for header and footer size */
 }
 
 #page-container {
@@ -254,9 +261,7 @@ main {
 }
 
 footer {
-  position: absolute;
-  bottom: 0;
-  height: 5rem;
+  height: 100px;
 }
 
 /* other features */
