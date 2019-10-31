@@ -312,8 +312,10 @@ input {
 /* input text from bootstrap */
 .form-control {
   position: relative;
-  top: -4px;
-  width: 25%;
+  display: block;
+  height: 34px;
+  font-size: 0.875rem;
+  width: 100%;
   min-width: 300px;
   padding: 0.2em 0.4em;
   line-height: 1.5;
