@@ -1,13 +1,17 @@
+<header id="site-header">
+  <img src="{{this.target.location.rootURL}}doodle docs big logo.png" />
+  <span>Early Alpha</span>
+  <nav id="site-nav">
+    {{#link-to "site.home" class="button"}}Home{{/link-to}}
+    |
+    {{#link-to "site.faq" class="button"}}FAQ{{/link-to}}
+    |
+    {{#link-to "site.signup" class="button"}}Sign Up{{/link-to}}
+    |
+    {{#link-to "site.login" class="button"}}Log In{{/link-to}}
+  </nav>
+</header>
 <main>
-  <header id="site-header">
-    <img src="{{this.target.location.rootURL}}doodle docs big logo.png" />
-    <span>Early Alpha</span>
-    <nav id="site-nav">
-      {{#link-to "site.home" class="button"}}Home{{/link-to}}
-      |
-      {{#link-to "site.faq" class="button"}}FAQ{{/link-to}}
-    </nav>
-  </header>
   {{outlet}}
 </main>
 <footer>
