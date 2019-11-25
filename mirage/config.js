@@ -34,4 +34,17 @@ export default function() {
       return new Response(400, { errors: ["not the same email"] });
     }
   });
+  this.post("auth/login", async (schema, request) => {
+    let attrs = JSON.parse(request.requestBody).user;
+    const user = await schema.users.findBy({ email: attrs.email });
+    if (user.password === attrs.password && user !== undefined) {
+      const token = "Bearer awesome-auth-token";
+      this.token = token;
+      return {
+        token
+      };
+    } else {
+      return new Response(400, { errors: ["wrong username or password"] });
+    }
+  });
 }

@@ -1,13 +1,13 @@
 <div class="outer-centered static">
   <div class="inner-centered" id="login">
-    <form>
+    <form {{action "authenticate" on="submit"}}>
       <div class="form-group">
-        <label>Username</label>
-        <input class="form-control" type="text" />
+        <label>Email</label>
+        {{input value=email placeholder="Enter Login" class="form-control"}}
       </div>
       <div class="form-group">
         <label>Password</label>
-        <input class="form-control" type="password" />
+        {{input value=password type="password" placeholder="Enter Password" class="form-control"}}
       </div>
       <div class="form-group">
         <label for="user_remember_me">
