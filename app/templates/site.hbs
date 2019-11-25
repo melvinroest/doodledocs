@@ -6,10 +6,14 @@
     |
     {{#link-to "site.faq" class="button"}}FAQ{{/link-to}}
     |
-    {{#link-to "site.signup" class="button"}}Sign Up{{/link-to}}
+    {{#if session.isAuthenticated}}
+    <a href="#logout" {{action 'logout'}}>Log Out</a>
     |
+    {{else}}
     {{#link-to "site.login" class="button"}}Log In{{/link-to}}
+    |
     {{#link-to "site.signup" class="button"}}Sign Up{{/link-to}}
+    {{/if}}
   </nav>
 </header>
 <main>
