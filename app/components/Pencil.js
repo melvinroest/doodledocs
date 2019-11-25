@@ -1,13 +1,12 @@
-const FORCE_MODIFIER = 8;
-
 export default class Pencil {
-  constructor(color, thickness) {
+  constructor(color, thickness, pressureSensitivityValue) {
     this.color = color; //opacity assumed w/ rgba
     this.thickness = thickness;
+    this.pressureSensitivityValue = pressureSensitivityValue;
   }
 
   render(paper, x, y, force) {
-    let thickness = this.thickness + force * FORCE_MODIFIER; //todo: need adj for tool overlay -- todo: put this in tool overlay code
+    let thickness = this.thickness + force * this.pressureSensitivityValue; //todo: need adj for tool overlay -- todo: put this in tool overlay code
     const adj = thickness / 2;
     paper.fillStyle = this.color;
     paper.fillRect(x - adj, y - adj, thickness, thickness);

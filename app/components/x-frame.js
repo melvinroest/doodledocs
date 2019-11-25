@@ -23,7 +23,6 @@ export default Component.extend({
   },
   load(url, options) {
     const element = this.element ? this.element : this;
-    console.log("url", url);
     if (url === "") {
       //empty url is fine
       element.srcdoc = "";
@@ -34,7 +33,6 @@ export default Component.extend({
         `X-Frame-Bypass src ${url} does not start with http(s)://`
       );
     }
-    console.log("X-Frame-Bypass loading:", url);
     const html = `
       <html>
         <head>
@@ -76,6 +74,13 @@ export default Component.extend({
         let result = undefined;
         switch (type) {
           case "image":
+            result = {
+              content: resBlob,
+              type,
+              subType
+            };
+            break;
+          case "application":
             result = {
               content: resBlob,
               type,
@@ -139,11 +144,23 @@ export default Component.extend({
             data.content = data.content.replace(regex, html);
             element.srcdoc = data.content;
           }
+          if (data.subType === "pdf") {
+            const div = document.createElement("div");
+            div.innerHTML = `
+            <html>
+            <style>
+            object, iframe { height: 100vh; width: 80%; overflow: auto; }
+            </style>
+            <body>
+                <object data="${url}" type="application/pdf">
+                    <embed style="width: 100%;" src="${url}" type="application/pdf" />
+                </object>
+            </body>
+            </html>
+            `;
+            element.srcdoc = div.innerHTML;
+          }
           if (data.type === "image") {
-            // const myImage = document.createElement("img");
-            // myImage.src = url;
-            // data.content = myImage;
-            // element.appendChild(myImage);
             element.srcdoc = `<img src="${url}">`;
           }
 

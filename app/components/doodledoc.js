@@ -18,8 +18,9 @@ export default Component.extend({
   attributeBindings: ["style"],
   style:
     "position: absolute; left: 0; top: 0; z-index: 99; height: 300vh; width: 100%; pointer-events: none;",
-  didRender() {
+  async didRender() {
     this._super(...arguments);
+
     const hud = this.element.children[0];
     const canvas = this.element.children[1];
     canvas.style.pointerEvents = "auto"; //probably move this to CSS
@@ -31,11 +32,13 @@ export default Component.extend({
 
     disablePageScroll();
 
-    const tools = new DrawTools();
-    initMenu(this, context, tools);
+    const tools = new DrawTools(this.settings);
+    initMenu(this, context, tools, this.settings);
     const drawState = drawEngine.init(context, hudContext, tools);
 
     transmissionService.onReceivingMessage((data, address) => {
+      //To do: BUG, at this moment palm cancellation fails b/c of the wrong window being set
+      //To do: BUG, at this moment color is not being sent
       drawEngine.draw(drawState, data);
     });
     const token = PubSub.subscribe(

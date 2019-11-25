@@ -9,6 +9,7 @@
       href="#scroll-off">draw</a></span>
   <br />
   {{!-- Needs to be type email for iOS compatibility --}}
+  {{#if this.model.settings.annotation_options}}
   <span>Website: <input id="website-input-menu-item" type="email" autocorrect="off" autocapitalize="none"
       class="form-control" style="display: inline-block; width: 25%; top: -4px; margin-top: 10px;" /> <a
       id="website-submit-menu-item" href="#annotate-website">Go</a></span>
@@ -16,6 +17,7 @@
   <span>Website transparency: <input id="website-slider-menu-item" type="range" name="website-opacity" value="1" min="0"
       max="1" step="0.01" /></span>
   <br />
+  {{/if}}
   <span>Palette: <a id="pencil" href="#using-pencil">Pencil</a><span
       style="margin: 0; margin-left: 10px; padding: 1px 7px 2px; top: 0;" id="pencil-picker"></span> |
     <a id="eraser" href="#using-eraser">Eraser</a>
