@@ -13,7 +13,7 @@ const CanvasModeEnum = Object.freeze({
   SCROLL: Symbol("scroll")
 });
 
-export function initMenu(emberObject, context, tools) {
+export function initMenu(emberObject, context, tools, settings) {
   const canvas = context.canvas;
   let canvasMode = CanvasModeEnum.DRAW;
 
@@ -63,12 +63,14 @@ export function initMenu(emberObject, context, tools) {
     }
   });
 
-  document
-    .getElementById("website-submit-menu-item")
-    .addEventListener(CLICK, e => {
-      const url = document.getElementById("website-input-menu-item").value;
-      emberObject._target.set("website", url);
-    });
+  if (settings.annotation_options) {
+    document
+      .getElementById("website-submit-menu-item")
+      .addEventListener(CLICK, e => {
+        const url = document.getElementById("website-input-menu-item").value;
+        emberObject._target.set("website", url);
+      });
+  }
 
   //init zoom settings -- ipad only
   const menu = document.getElementById("app-header");

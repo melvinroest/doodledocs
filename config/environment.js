@@ -2,6 +2,11 @@
 
 module.exports = function(environment) {
   let ENV = {
+    "ember-simple-auth": {
+      authenticationRoute: "/site/login",
+      routeAfterAuthentication: "/",
+      routeIfAlreadyAuthenticated: "/"
+    },
     modulePrefix: "doodledocs-app",
     environment,
     buildTarget: process.env.TARGET || environment,
@@ -56,6 +61,9 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV["ember-cli-mirage"] = {
+      enabled: false
+    };
   }
 
   if (environment === "test") {

@@ -1,0 +1,41 @@
+<div class="outer-centered static">
+  <div class="inner-centered">
+    <form>
+      <div class="form-group">
+        <label>Full name</label>
+        {{input class="form-control" type="text" value=model.fullname}}
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        {{input class="form-control" type="text" value=model.username}}
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        {{input class="form-control" type="text" value=model.email}}
+      </div>
+      <div class="form-group">
+        <label>Repeat Email</label>
+        {{input class="form-control" type="text" value=model.email_confirmation}}
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        {{input class="form-control" type="password" value=model.password}}
+      </div>
+      <div class="form-group">
+        <label for="email-opt-out">
+          {{input class="checkbox" type="checkbox" checked=model.email_opt_out }}
+          <span>I don’t want to receive email from Doodledocs</span>
+        </label>
+      </div>
+      {{!-- <div>
+        I am not a robot
+      </div> --}}
+      <div class="submit form-group">
+        {{!-- <input class="btn btn-primary" type="submit" value="Register"
+          {{action "createUser" "Katie" "kate123" "katie@gmail.com" "katie@gmail.com" "iloveyou" true}} /> --}}
+        <input class="btn btn-primary" type="submit" value="Register"
+          {{action "createUser" model.fullname model.username model.email model.email_confirmation model.password model.email_opt_out}} />
+      </div>
+    </form>
+  </div>
+</div>
