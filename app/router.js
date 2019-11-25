@@ -13,10 +13,12 @@ Router.map(function() {
     this.route("faq");
     this.route("signup");
     this.route("login");
+    this.route("settings");
   });
   this.route("app", function() {
     this.route("doc", { path: "/:random_url" });
   });
+  this.route("settings");
 });
 
 export default Router;

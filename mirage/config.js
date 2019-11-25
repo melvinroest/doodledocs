@@ -47,4 +47,18 @@ export default function() {
       return new Response(400, { errors: ["wrong username or password"] });
     }
   });
+  this.get("/settings", async (schema, request) => {
+    const settings = await schema.settings.create({
+      pencil_thickness: 1,
+      pencil_pressure_sensitivity: 1,
+      eraser_thickness: 20,
+      annotation_options: true
+    });
+    return settings;
+  });
+  this.put("/settings/:id", async (schema, request) => {
+    let attrs = JSON.parse(request.requestBody).settings;
+    console.log("/settings", attrs);
+    //to do: this test is not working as I want it to since I am not getting the right attrs in
+  });
 }

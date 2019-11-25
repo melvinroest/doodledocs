@@ -9,6 +9,7 @@
     {{#if session.isAuthenticated}}
     <a href="#logout" {{action 'logout'}}>Log Out</a>
     |
+    {{#link-to "site.settings" class="button"}}Settings{{/link-to}}
     {{else}}
     {{#link-to "site.login" class="button"}}Log In{{/link-to}}
     |

@@ -1,0 +1,25 @@
+<div class="outer-centered static">
+  <div class="inner-centered" id="settings">
+    <form {{action "updateSettings" on="submit"}}>
+      <div class="form-group">
+        <label>Pencil Thickness</label>
+        {{input type="range" name="pencil_thickness" value=model.pencil_thickness min="1" max="10" step="1"}}
+      </div>
+      <div class="form-group">
+        <label>Pencil Pressure Sensitivity</label>
+        {{input type="range" name="pencil_thickness" value=model.pencil_pressure_sensitivity min="1" max="10" step="1"}}
+      </div>
+      <div class="form-group">
+        <label>Eraser Thickness</label>
+        {{input type="range" name="eraser_thickness" value=model.eraser_thickness min="1" max="30" step="1"}}
+      </div>
+      <div class="form-group">
+        <label>Annotation Options</label>
+        {{input type="checkbox" name="annotation_options" checked=model.annotation_options}}
+      </div>
+      <div class="submit form-group">
+        <input class="btn btn-primary" type="submit" value="Update Settings" />
+      </div>
+    </form>
+  </div>
+</div>
